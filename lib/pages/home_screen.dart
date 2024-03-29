@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_diet_app/pages/anasayfa_page.dart';
+import 'package:flutter_diet_app/details/step_count.dart';
+import 'package:flutter_diet_app/details/water.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class NavbarTheme extends StatefulWidget {
   const NavbarTheme({super.key});
@@ -12,6 +14,7 @@ class _NavbarThemeState extends State<NavbarTheme>
     with TickerProviderStateMixin {
   late final TabController _tabController;
   final double _notchedMargin = 10;
+  List<IconData> icons = [];
 
   @override
   void initState() {
@@ -64,7 +67,17 @@ class _NavbarThemeState extends State<NavbarTheme>
                       size: 30,
                     )),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2025),
+                    );
+                    if (pickedDate != null) {
+                      print('Seçilen tarih: ${pickedDate.toIso8601String()}');
+                    }
+                  },
                   icon: const Icon(
                     Icons.calendar_month_outlined,
                     size: 30,
@@ -85,36 +98,27 @@ class _NavbarThemeState extends State<NavbarTheme>
     );
   }
 
-  void _navigateToAnasayfaPage() {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => const AnasayfaPage(),
-    ));
-  }
-
   TabBar _mytabBar() {
     return TabBar(
       controller: _tabController,
-      tabs: [
-        InkWell(
-          onTap: _navigateToAnasayfaPage,
-          child: const Tab(
-            icon: Icon(
-              Icons.home,
-              size: 35,
-            ),
+      tabs: const [
+        Tab(
+          icon: Icon(
+            Icons.home,
+            size: 35,
           ),
         ),
-        const Tab(
+        Tab(
           icon: Icon(
             Icons.qr_code_scanner,
             size: 35,
           ),
         ),
-        const Tab(
-          icon: Icon(Icons.person, size: 35),
+        Tab(
+          icon: Icon(Icons.wysiwyg_rounded, size: 35),
         ),
-        const Tab(
-          icon: Icon(Icons.settings, size: 35),
+        Tab(
+          icon: Icon(Icons.person, size: 35),
         ),
       ],
     );
@@ -127,15 +131,89 @@ class _NavbarThemeState extends State<NavbarTheme>
     );
   }
 
+  Widget _buildCardWidget(String title, String cardTitle) {
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(cardTitle), // Kart başlığı burada kullanılıyor
+              content: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Arama yapın',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ]),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Kapat'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            width: 150,
+            height: 140,
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTabView(_MyTabViews view) {
     switch (view) {
       case _MyTabViews.anasayfa:
-        return const Center(
-          child: Text('Anasayfa'),
-        );
+        return ListView(padding: const EdgeInsets.only(bottom: 200), children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _RadialGraph(context: context),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildCardWidget("Kahvaltı 🍳", "Kahvaltı 🍳"),
+                    _buildCardWidget("Ara Öğün 🥗", "Ara Öğün 🥗")
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildCardWidget("Öğle Yemeği 🥐", "Öğle Yemeği 🥐"),
+                    _buildCardWidget("Akşam Yemeği 🍕", "Akşam Yemeği 🍕"),
+                  ],
+                ),
+                const WaterCard(),
+                const SizedBox(height: 5),
+                const LinearProgressInCard(
+                  progressValue: 0.5,
+                ),
+              ],
+            ),
+          ),
+        ]);
       case _MyTabViews.adimSayar:
         return const Center(
-          child: Text('Barkod Tarayıcı'),
+          child: Text('Adım Sayar'),
         );
       case _MyTabViews.barkodTarayici:
         return const Center(
@@ -146,6 +224,58 @@ class _NavbarThemeState extends State<NavbarTheme>
           child: Text('Ayarlar'),
         );
     }
+  }
+}
+
+class _RadialGraph extends StatelessWidget {
+  const _RadialGraph({
+    required this.context,
+  });
+
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 2,
+      height: MediaQuery.of(context).size.height / 3,
+      child: SfRadialGauge(
+        axes: [
+          RadialAxis(
+            pointers: const [
+              RangePointer(
+                value: 50,
+                width: 35,
+                cornerStyle: CornerStyle.bothCurve,
+                color: Colors.orange,
+                gradient: SweepGradient(
+                    colors: [Color(0xFFFFC434), Color(0xFFFF8209)],
+                    stops: [0.1, 0.75]),
+              )
+            ],
+            axisLineStyle: const AxisLineStyle(
+                thickness: 35, color: Color.fromARGB(255, 201, 193, 193)),
+            startAngle: 5,
+            endAngle: 5,
+            showLabels: false,
+            showTicks: false,
+            annotations: const [
+              GaugeAnnotation(
+                widget: Text(
+                  '50%',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+                angle: 270,
+                positionFactor: 0.1,
+              )
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
