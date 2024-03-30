@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_diet_app/details/step_count.dart';
 import 'package:flutter_diet_app/details/water.dart';
+import 'package:flutter_diet_app/pages/barcode.dart';
 import 'package:flutter_diet_app/pages/settings_screen.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -12,17 +12,16 @@ class NavbarTheme extends StatefulWidget {
   State<NavbarTheme> createState() => _NavbarThemeState();
 }
 
-class _NavbarThemeState extends State<NavbarTheme>
-    with TickerProviderStateMixin {
+class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin {
   late final TabController _tabController;
   final double _notchedMargin = 10;
   List<IconData> icons = [];
+  final BarcodeScannerService _barcodeScannerService = BarcodeScannerService();
 
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: _MyTabViews.values.length, vsync: this);
+    _tabController = TabController(length: _MyTabViews.values.length, vsync: this);
   }
 
   @override
@@ -34,8 +33,7 @@ class _NavbarThemeState extends State<NavbarTheme>
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: const Color.fromARGB(255, 102, 195, 106),
           child: const Icon(
             Icons.smart_toy_outlined,
@@ -50,8 +48,7 @@ class _NavbarThemeState extends State<NavbarTheme>
         appBar: AppBar(
           title: Row(
             children: [
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.menu, size: 30)),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.menu, size: 30)),
               const SizedBox(width: 10),
               const Text(
                 'BUGÜN',
@@ -141,17 +138,15 @@ class _NavbarThemeState extends State<NavbarTheme>
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(cardTitle), // Kart başlığı burada kullanılıyor
-              content: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Arama yapın',
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                  ]),
+              content: const Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Arama yapın',
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ]),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -214,8 +209,13 @@ class _NavbarThemeState extends State<NavbarTheme>
           ),
         ]);
       case _MyTabViews.adimSayar:
-        return const Center(
-          child: Text('Adım Sayar'),
+        return Center(
+          child: ElevatedButton(
+            onPressed: () async {
+              String result = await _barcodeScannerService.scanBarcodeNormal();
+            },
+            child: const Text('Scan Barcode'),
+          ),
         );
       case _MyTabViews.barkodTarayici:
         return const Center(
@@ -250,13 +250,10 @@ class _RadialGraph extends StatelessWidget {
                 width: 35,
                 cornerStyle: CornerStyle.bothCurve,
                 color: Colors.orange,
-                gradient: SweepGradient(
-                    colors: [Color(0xFFFFC434), Color(0xFFFF8209)],
-                    stops: [0.1, 0.75]),
+                gradient: SweepGradient(colors: [Color(0xFFFFC434), Color(0xFFFF8209)], stops: [0.1, 0.75]),
               )
             ],
-            axisLineStyle: const AxisLineStyle(
-                thickness: 35, color: Color.fromARGB(255, 201, 193, 193)),
+            axisLineStyle: const AxisLineStyle(thickness: 35, color: Color.fromARGB(255, 201, 193, 193)),
             startAngle: 5,
             endAngle: 5,
             showLabels: false,
@@ -265,10 +262,7 @@ class _RadialGraph extends StatelessWidget {
               GaugeAnnotation(
                 widget: Text(
                   '50%',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
                 ),
                 angle: 270,
                 positionFactor: 0.1,
