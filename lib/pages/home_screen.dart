@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_diet_app/details/step_count.dart';
 import 'package:flutter_diet_app/details/water.dart';
+import 'package:flutter_diet_app/pages/settings_screen.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class NavbarTheme extends StatefulWidget {
@@ -220,8 +222,8 @@ class _NavbarThemeState extends State<NavbarTheme>
           child: Text('Profil'),
         );
       case _MyTabViews.profil:
-        return const Center(
-          child: Text('Ayarlar'),
+        return const Column(
+          children: [Expanded(child: SettingScreen())],
         );
     }
   }
