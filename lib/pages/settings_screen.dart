@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_diet_app/pages/profil_page.dart';
 import 'package:flutter_diet_app/pages/reminders_page.dart';
 
 void main() {
@@ -9,7 +10,6 @@ class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SettingScreenState createState() => _SettingScreenState();
 }
 
@@ -18,21 +18,25 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Klavyeyi kapat
         FocusScope.of(context).unfocus();
       },
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
+          backgroundColor: const Color.fromARGB(255, 224, 249, 255),
           appBar: AppBar(
+            backgroundColor: const Color.fromARGB(255, 224, 249, 255),
             title: Row(
               children: [
                 IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.settings, size: 30),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back_rounded, size: 30),
                 ),
                 const Text(
-                  'AYARLAR',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  'Ayarlar',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 )
               ],
             ),

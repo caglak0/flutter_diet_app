@@ -7,11 +7,11 @@ class LighTema {
   LighTema() {
     theme = ThemeData(
         appBarTheme: const AppBarTheme(
-            color: Colors.transparent,
+            color: Color.fromARGB(255, 224, 249, 255),
             shape: RoundedRectangleBorder(
                 borderRadius:
                     BorderRadius.vertical(bottom: Radius.circular(20)))),
-        scaffoldBackgroundColor: Colors.white.withOpacity(0.9),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 224, 249, 255),
         checkboxTheme: const CheckboxThemeData(
             fillColor: MaterialStatePropertyAll(Colors.green),
             side: BorderSide(color: Colors.green)),

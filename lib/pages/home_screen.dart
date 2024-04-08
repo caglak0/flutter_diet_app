@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_diet_app/details/step_count.dart';
+import 'package:flutter_diet_app/details/step_radial.dart';
 import 'package:flutter_diet_app/details/water.dart';
 import 'package:flutter_diet_app/pages/barcode.dart';
-import 'package:flutter_diet_app/pages/settings_screen.dart';
+import 'package:flutter_diet_app/pages/profil_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class NavbarTheme extends StatefulWidget {
@@ -12,7 +12,8 @@ class NavbarTheme extends StatefulWidget {
   State<NavbarTheme> createState() => _NavbarThemeState();
 }
 
-class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin {
+class _NavbarThemeState extends State<NavbarTheme>
+    with TickerProviderStateMixin {
   late final TabController _tabController;
   final double _notchedMargin = 10;
   List<IconData> icons = [];
@@ -21,7 +22,8 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _MyTabViews.values.length, vsync: this);
+    _tabController =
+        TabController(length: _MyTabViews.values.length, vsync: this);
   }
 
   @override
@@ -29,11 +31,13 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
     return DefaultTabController(
       length: _MyTabViews.values.length,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         extendBody: true,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: const Color.fromARGB(255, 102, 195, 106),
           child: const Icon(
             Icons.smart_toy_outlined,
@@ -44,53 +48,6 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
           notchMargin: _notchedMargin,
           shape: const CircularNotchedRectangle(),
           child: _mytabBar(),
-        ),
-        appBar: AppBar(
-          title: Row(
-            children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.menu, size: 30)),
-              const SizedBox(width: 10),
-              const Text(
-                'BUGÜN',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          actions: [
-            Row(
-              children: [
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 30,
-                    )),
-                IconButton(
-                  onPressed: () async {
-                    final DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2025),
-                    );
-                    if (pickedDate != null) {
-                      print('Seçilen tarih: ${pickedDate.toIso8601String()}');
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.calendar_month_outlined,
-                    size: 30,
-                  ),
-                ),
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 30,
-                    )),
-              ],
-            ),
-          ],
         ),
         body: _tabBarView(),
       ),
@@ -114,7 +71,7 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
           ),
         ),
         Tab(
-          icon: Icon(Icons.wysiwyg_rounded, size: 35),
+          icon: Icon(Icons.folder_copy_outlined, size: 35),
         ),
         Tab(
           icon: Icon(Icons.person, size: 35),
@@ -137,16 +94,18 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(cardTitle), // Kart başlığı burada kullanılıyor
-              content: const Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Arama yapın',
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                ),
-                SizedBox(height: 20),
-              ]),
+              title: Text(cardTitle),
+              content: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Arama yapın',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ]),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -178,37 +137,90 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
   Widget _buildTabView(_MyTabViews view) {
     switch (view) {
       case _MyTabViews.anasayfa:
-        return ListView(padding: const EdgeInsets.only(bottom: 200), children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+        return Scaffold(
+          appBar: AppBar(
+            title: Row(
               children: [
-                _RadialGraph(context: context),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildCardWidget("Kahvaltı 🍳", "Kahvaltı 🍳"),
-                    _buildCardWidget("Ara Öğün 🥗", "Ara Öğün 🥗")
-                  ],
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.menu, size: 30),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildCardWidget("Öğle Yemeği 🥐", "Öğle Yemeği 🥐"),
-                    _buildCardWidget("Akşam Yemeği 🍕", "Akşam Yemeği 🍕"),
-                  ],
-                ),
-                const WaterCard(),
-                const SizedBox(height: 5),
-                const LinearProgressInCard(
-                  progressValue: 0.5,
+                const SizedBox(width: 10),
+                const Text(
+                  'Günaydın ✨',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
+            actions: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 30,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      final DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2025),
+                      );
+                      if (pickedDate != null) {
+                        print('Seçilen tarih: ${pickedDate.toIso8601String()}');
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.calendar_month_outlined,
+                      size: 30,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 30,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ]);
-      case _MyTabViews.adimSayar:
+          body:
+              ListView(padding: const EdgeInsets.only(bottom: 200), children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _RadialGraph(context: context),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildCardWidget("Kahvaltı 🍳", "Kahvaltı 🍳"),
+                      _buildCardWidget("Ara Öğün 🥗", "Ara Öğün 🥗")
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildCardWidget("Öğle Yemeği 🥐", "Öğle Yemeği 🥐"),
+                      _buildCardWidget("Akşam Yemeği 🍕", "Akşam Yemeği 🍕"),
+                    ],
+                  ),
+                  const WaterCard(),
+                  const SizedBox(height: 5),
+                  const StepRadial()
+                ],
+              ),
+            ),
+          ]),
+        );
+      case _MyTabViews.barkodTarayici:
         return Center(
           child: ElevatedButton(
             onPressed: () async {
@@ -217,13 +229,13 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
             child: const Text('Scan Barcode'),
           ),
         );
-      case _MyTabViews.barkodTarayici:
+      case _MyTabViews.analiz:
         return const Center(
-          child: Text('Profil'),
+          child: Text('analiz'),
         );
       case _MyTabViews.profil:
         return const Column(
-          children: [Expanded(child: SettingScreen())],
+          children: [Expanded(child: ProfileScreen())],
         );
     }
   }
@@ -247,13 +259,20 @@ class _RadialGraph extends StatelessWidget {
             pointers: const [
               RangePointer(
                 value: 50,
-                width: 35,
+                width: 25,
                 cornerStyle: CornerStyle.bothCurve,
                 color: Colors.orange,
-                gradient: SweepGradient(colors: [Color(0xFFFFC434), Color(0xFFFF8209)], stops: [0.1, 0.75]),
+                gradient: SweepGradient(colors: [
+                  Color.fromARGB(255, 243, 177, 177),
+                  Color.fromARGB(255, 234, 108, 108)
+                ], stops: [
+                  0.1,
+                  0.75
+                ]),
               )
             ],
-            axisLineStyle: const AxisLineStyle(thickness: 35, color: Color.fromARGB(255, 201, 193, 193)),
+            axisLineStyle: const AxisLineStyle(
+                thickness: 25, color: Color.fromARGB(255, 224, 217, 217)),
             startAngle: 5,
             endAngle: 5,
             showLabels: false,
@@ -262,7 +281,10 @@ class _RadialGraph extends StatelessWidget {
               GaugeAnnotation(
                 widget: Text(
                   '50%',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                      color: Colors.black),
                 ),
                 angle: 270,
                 positionFactor: 0.1,
@@ -275,4 +297,4 @@ class _RadialGraph extends StatelessWidget {
   }
 }
 
-enum _MyTabViews { anasayfa, adimSayar, barkodTarayici, profil }
+enum _MyTabViews { anasayfa, barkodTarayici, analiz, profil }

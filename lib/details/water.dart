@@ -1,47 +1,23 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Su'),
-        ),
-        body: const WaterCard(),
-      ),
-    );
-  }
-}
-
 class WaterCard extends StatefulWidget {
   const WaterCard({super.key});
 
   @override
-  IconListState createState() => IconListState();
+  _WaterCardState createState() => _WaterCardState();
 }
 
-class IconListState extends State<WaterCard> {
+class _WaterCardState extends State<WaterCard> {
   List<bool> isBlue = List.generate(8, (index) => false);
   int totalMl = 0;
 
   void toggleColor(int index) {
     setState(() {
-      if (isBlue[index]) {
-        totalMl -= (index + 1) * 250;
-      } else {
-        totalMl += (index + 1) * 250;
+      for (int i = 0; i < isBlue.length; i++) {
+        isBlue[i] = i <= index;
       }
 
-      for (int i = 0; i <= index; i++) {
-        isBlue[i] = !isBlue[index];
-      }
+      totalMl = (index + 1) * 250;
 
       if (isBlue.every((element) => element) && totalMl >= 2000) {
         showSuccessDialog();
@@ -115,7 +91,7 @@ class IconListState extends State<WaterCard> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
                         child: Text(
-                          'Toplam Litre: ${(totalMl / 1000).toStringAsFixed(1)}', // "Toplam Litre" ifadesi eklendi
+                          'Toplam Litre: ${(totalMl / 1000).toStringAsFixed(2)}',
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),

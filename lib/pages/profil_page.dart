@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_diet_app/pages/settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -51,21 +52,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Profil Oluşturma'),
-        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.person),
-                  SizedBox(width: 10),
-                  Text(
-                    'Adınız',
-                    style: TextStyle(fontSize: 16),
+                  const Row(
+                    children: [
+                      Icon(
+                        Icons.person,
+                        size: 35,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Adınız',
+                        style: TextStyle(fontSize: 30),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SettingScreen()),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.settings,
+                      size: 35,
+                    ),
                   ),
                 ],
               ),
@@ -116,9 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 controller: _bkiController,
                 focusNode: _bkiNode,
                 decoration: const InputDecoration(labelText: 'BKİ'),
-                onFieldSubmitted: (_) {
-                  // Buraya isterseniz son alanın sonrasındaki işlemi yazabilirsiniz.
-                },
+                onFieldSubmitted: (_) {},
               ),
               const SizedBox(height: 20),
               const SizedBox(
