@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class ReminderScreen extends StatefulWidget {
-  const ReminderScreen({super.key});
+  const ReminderScreen({Key? key}) : super(key: key);
 
   @override
   State<ReminderScreen> createState() => _ReminderScreenState();
@@ -43,6 +43,13 @@ class _ReminderScreenState extends State<ReminderScreen> {
     setState(() {
       _reminderTimesList[index].add(TimeOfDay.now());
       _isReminderOn[index].add(true);
+    });
+  }
+
+  void _removeReminder(int index, int innerIndex) {
+    setState(() {
+      _reminderTimesList[index].removeAt(innerIndex);
+      _isReminderOn[index].removeAt(innerIndex);
     });
   }
 
@@ -96,6 +103,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   });
                 },
                 () => _selectTime(context, times, index, innerIndex),
+                () => _removeReminder(
+                    index, innerIndex), // silme işlevselliği eklendi
               );
             },
           ),
@@ -112,15 +121,30 @@ class _ReminderScreenState extends State<ReminderScreen> {
     );
   }
 
-  Widget _buildReminderRow(TimeOfDay time, bool isReminderOn,
-      void Function(bool) onChanged, void Function() onTap) {
+  Widget _buildReminderRow(
+      TimeOfDay time,
+      bool isReminderOn,
+      void Function(bool) onChanged,
+      void Function() onTap,
+      VoidCallback onRemove) {
     return ListTile(
-      title: Text(
-        'Hatırlatma Saati: ${time.format(context)}',
-      ),
-      trailing: Switch(
-        value: isReminderOn,
-        onChanged: onChanged,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              'Hatırlatma Saati: ${time.format(context)}',
+            ),
+          ),
+          Switch(
+            value: isReminderOn,
+            onChanged: onChanged,
+          ),
+          IconButton(
+            icon: const Icon(Icons.clear, size: 18), // X ikonunu küçülttük
+            onPressed: onRemove, // Silme işlevselliği burada çağrılıyor
+          ),
+        ],
       ),
       onTap: onTap,
     );
