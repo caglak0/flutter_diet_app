@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/details/step_radial.dart';
 import 'package:flutter_diet_app/details/water.dart';
+import 'package:flutter_diet_app/pages/asistan_app.dart';
 import 'package:flutter_diet_app/pages/barcode.dart';
 import 'package:flutter_diet_app/pages/profil_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:flutter_diet_app/pages/side_menu.dart';
 
 class NavbarTheme extends StatefulWidget {
   const NavbarTheme({super.key});
@@ -35,7 +37,14 @@ class _NavbarThemeState extends State<NavbarTheme>
         extendBody: true,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ChatScreen(),
+              ),
+            );
+          },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: const Color.fromARGB(255, 102, 195, 106),
@@ -138,19 +147,11 @@ class _NavbarThemeState extends State<NavbarTheme>
     switch (view) {
       case _MyTabViews.anasayfa:
         return Scaffold(
+          drawer: const SideMenu(),
           appBar: AppBar(
-            title: Row(
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.menu, size: 30),
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'Günaydın ✨',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-              ],
+            title: const Text(
+              'Günaydın ✨',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             actions: [
               Row(

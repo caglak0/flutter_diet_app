@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_diet_app/pages/profil_page.dart';
 import 'package:flutter_diet_app/pages/reminders_page.dart';
 
 void main() {
