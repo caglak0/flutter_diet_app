@@ -46,6 +46,8 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   #profil
   fl_chart: ^0.35.0
+  #provider
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
