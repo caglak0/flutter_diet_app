@@ -224,11 +224,28 @@ class _NavbarThemeState extends State<NavbarTheme>
         );
       case _MyTabViews.barkodTarayici:
         return Center(
-          child: ElevatedButton(
-            onPressed: () async {
-              String result = await _barcodeScannerService.scanBarcodeNormal();
-            },
-            child: const Text('Scan Barcode'),
+          child: Card(
+            elevation: 5, // Kartın yükseltilmiş gölge efekti
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15), // Kartın köşelerinin yuvarlatılması
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  String result = await _barcodeScannerService.scanBarcodeNormal();
+                },
+                label: const Text('Barkod Tarayıcı'),
+                icon: const Icon(Icons.camera_alt_outlined),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.yellow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
           ),
         );
       case _MyTabViews.analiz:
