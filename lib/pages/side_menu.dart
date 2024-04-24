@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_diet_app/pages/mode.dart';
+import 'package:flutter_diet_app/main.dart';
+import 'package:provider/provider.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -24,8 +27,7 @@ class SideMenu extends StatelessWidget {
             accountEmail: null,
             decoration: const BoxDecoration(
               color: Colors.blue,
-              image: DecorationImage(
-                  fit: BoxFit.fill, image: AssetImage('assets/back.jpg')),
+              image: DecorationImage(fit: BoxFit.fill, image: AssetImage('assets/back.jpg')),
             ),
           ),
           ListTile(
@@ -39,15 +41,30 @@ class SideMenu extends StatelessWidget {
             onTap: () {},
           ),
           ListTile(
-            leading: const Icon(Icons.nights_stay_outlined),
-            title: const Text('Görünüm'),
+            // TEMA AYARI
+            leading: SizedBox(
+              width: 20, // Sabit bir genişlik atayarak diğer ListTile'larla uyumlu hale getirin
+              child: IconButton(
+                padding: const EdgeInsets.only(right: 20),
+                onPressed: () {
+                  themeProvider.toggleTheme();
+                },
+                icon: themeProvider.currentTheme == ThemeData.light()
+                    ? const Icon(
+                        Icons.dark_mode_outlined,
+                        color: Colors.black,
+                        size: 25,
+                      )
+                    : const Icon(
+                        Icons.wb_sunny,
+                        color: Colors.yellow,
+                        size: 25,
+                      ),
+              ),
+            ),
+            title: const Text('Tema'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ThemeModePage(),
-                ),
-              );
+              themeProvider.toggleTheme();
             },
           ),
           ListTile(
