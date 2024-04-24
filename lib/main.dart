@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_diet_app/pages/home_screen.dart';
 import 'package:flutter_diet_app/screens/welcome_page.dart';
 import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';

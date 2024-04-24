@@ -23,7 +23,7 @@ class WelcomePage extends StatelessWidget {
                     text: const TextSpan(
                       children: [
                         TextSpan(
-                          text: 'Health+\'a Hoşgeldin!',
+                          text: 'Health⁺\'a Hoşgeldin!',
                           style: TextStyle(
                               fontSize: 45.0, fontWeight: FontWeight.bold),
                         ),

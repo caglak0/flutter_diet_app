@@ -45,7 +45,7 @@ class _AnalizScreenState extends State<AnalizScreen> {
               padding: EdgeInsets.only(top: 50.0),
               child: Text(
                 '👣 Adım Sayısı Analizi',
-                style: TextStyle(fontSize: 22),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
             Padding(
@@ -85,7 +85,7 @@ class _AnalizScreenState extends State<AnalizScreen> {
                         bottomTitles: SideTitles(
                           showTitles: true,
                           getTextStyles: (value) => const TextStyle(
-                              color: Color(0xff939393),
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 13),
                           margin: 10,
@@ -95,7 +95,7 @@ class _AnalizScreenState extends State<AnalizScreen> {
                         leftTitles: SideTitles(
                           showTitles: true,
                           getTextStyles: (value) => const TextStyle(
-                              color: Color(0xff939393),
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 14),
                           margin: 10,
@@ -123,7 +123,7 @@ class _AnalizScreenState extends State<AnalizScreen> {
                             BarChartRodData(
                               y: steps[index],
                               width: 18.0,
-                              colors: [Colors.blue],
+                              colors: [Colors.white],
                               borderRadius: BorderRadius.circular(6),
                             ),
                           ],
@@ -138,7 +138,7 @@ class _AnalizScreenState extends State<AnalizScreen> {
               padding: EdgeInsets.only(top: 20.0, bottom: 10),
               child: Text(
                 '🔥 Kalori Analizi',
-                style: TextStyle(fontSize: 22),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
             Container(
@@ -151,6 +151,12 @@ class _AnalizScreenState extends State<AnalizScreen> {
                       titlesData: FlTitlesData(
                         bottomTitles: SideTitles(
                           showTitles: true,
+                          getTextStyles: (value) => const TextStyle(
+                            color:
+                                Colors.white, // X eksenindeki yazıların rengi
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                           getTitles: (value) {
                             // x eksenindeki etiketleri oluştur
                             switch (value.toInt()) {
@@ -174,6 +180,12 @@ class _AnalizScreenState extends State<AnalizScreen> {
                         ),
                         leftTitles: SideTitles(
                           showTitles: true,
+                          getTextStyles: (value) => const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize:
+                                10, // Y eksenindeki yazıların font büyüklüğü
+                          ),
                           getTitles: (value) {
                             // y eksenindeki etiketleri oluştur
                             if (value % 500 == 0) {
@@ -190,7 +202,7 @@ class _AnalizScreenState extends State<AnalizScreen> {
                             return FlSpot(entry.key.toDouble(), entry.value);
                           }).toList(),
                           isCurved: true,
-                          colors: [Colors.blue],
+                          colors: [Colors.white],
                           barWidth: 4,
                           isStrokeCapRound: true,
                           belowBarData: BarAreaData(show: false),

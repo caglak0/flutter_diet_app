@@ -16,9 +16,7 @@ class _SettingScreenState extends State<SettingScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
