@@ -6,6 +6,7 @@ import 'package:flutter_diet_app/pages/barcode.dart';
 import 'package:flutter_diet_app/pages/profil_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:flutter_diet_app/pages/side_menu.dart';
+import 'package:flutter_diet_app/pages/analiz_page.dart';
 
 class NavbarTheme extends StatefulWidget {
   const NavbarTheme({super.key});
@@ -231,8 +232,8 @@ class _NavbarThemeState extends State<NavbarTheme>
           ),
         );
       case _MyTabViews.analiz:
-        return const Center(
-          child: Text('analiz'),
+        return const Column(
+          children: [Expanded(child: AnalizScreen())],
         );
       case _MyTabViews.profil:
         return const Column(
