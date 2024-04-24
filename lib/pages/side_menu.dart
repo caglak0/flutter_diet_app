@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/main.dart';
 import 'package:flutter_diet_app/screens/welcome_page.dart';
+import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatelessWidget {
@@ -50,7 +51,7 @@ class SideMenu extends StatelessWidget {
                 onPressed: () {
                   themeProvider.toggleTheme();
                 },
-                icon: themeProvider.currentTheme == ThemeData.light()
+                icon: themeProvider.currentTheme == LighTema().theme
                     ? const Icon(
                         Icons.dark_mode_outlined,
                         color: Colors.black,
