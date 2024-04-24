@@ -27,7 +27,10 @@ class StepRadial extends StatelessWidget {
                           cornerStyle: CornerStyle.bothCurve,
                           color: Colors.orange,
                           gradient: SweepGradient(
-                            colors: [Color.fromARGB(255, 243, 177, 177), Color.fromARGB(255, 234, 108, 108)],
+                            colors: [
+                              Color.fromARGB(222, 113, 144, 219),
+                              Color.fromARGB(222, 63, 118, 246)
+                            ],
                             stops: [0.1, 0.75],
                           ),
                         ),

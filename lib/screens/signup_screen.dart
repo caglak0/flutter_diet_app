@@ -104,8 +104,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Lütfen Şifre Giriniz';
-                          } else if (value.length < 8) {
-                            return 'Şifre en az 8 karakter olmalıdır';
+                          } else if (value.length < 4 || value.length > 9) {
+                            return 'Şifre en az 4 en fazla 8 karakter olmalıdır';
                           }
                           return null;
                         },
