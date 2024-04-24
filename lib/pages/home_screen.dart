@@ -15,8 +15,7 @@ class NavbarTheme extends StatefulWidget {
   State<NavbarTheme> createState() => _NavbarThemeState();
 }
 
-class _NavbarThemeState extends State<NavbarTheme>
-    with TickerProviderStateMixin {
+class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin {
   late final TabController _tabController;
   final double _notchedMargin = 10;
   List<IconData> icons = [];
@@ -25,8 +24,7 @@ class _NavbarThemeState extends State<NavbarTheme>
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: _MyTabViews.values.length, vsync: this);
+    _tabController = TabController(length: _MyTabViews.values.length, vsync: this);
   }
 
   @override
@@ -46,8 +44,7 @@ class _NavbarThemeState extends State<NavbarTheme>
               ),
             );
           },
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: const Color.fromARGB(255, 102, 195, 106),
           child: const Icon(
             Icons.smart_toy_outlined,
@@ -105,17 +102,15 @@ class _NavbarThemeState extends State<NavbarTheme>
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(cardTitle),
-              content: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Arama yapın',
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                  ]),
+              content: const Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Arama yapın',
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ]),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -192,8 +187,7 @@ class _NavbarThemeState extends State<NavbarTheme>
               ),
             ],
           ),
-          body:
-              ListView(padding: const EdgeInsets.only(bottom: 200), children: [
+          body: ListView(padding: const EdgeInsets.only(bottom: 200), children: [
             Align(
               alignment: Alignment.topCenter,
               child: Column(
@@ -264,17 +258,12 @@ class _RadialGraph extends StatelessWidget {
                 width: 25,
                 cornerStyle: CornerStyle.bothCurve,
                 color: Colors.orange,
-                gradient: SweepGradient(colors: [
-                  Color.fromARGB(255, 243, 177, 177),
-                  Color.fromARGB(255, 234, 108, 108)
-                ], stops: [
-                  0.1,
-                  0.75
-                ]),
+                gradient: SweepGradient(
+                    colors: [Color.fromARGB(255, 243, 177, 177), Color.fromARGB(255, 234, 108, 108)],
+                    stops: [0.1, 0.75]),
               )
             ],
-            axisLineStyle: const AxisLineStyle(
-                thickness: 25, color: Color.fromARGB(255, 224, 217, 217)),
+            axisLineStyle: const AxisLineStyle(thickness: 25, color: Color.fromARGB(255, 224, 217, 217)),
             startAngle: 5,
             endAngle: 5,
             showLabels: false,
@@ -284,9 +273,9 @@ class _RadialGraph extends StatelessWidget {
                 widget: Text(
                   '50%',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                      color: Colors.black),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
                 ),
                 angle: 270,
                 positionFactor: 0.1,

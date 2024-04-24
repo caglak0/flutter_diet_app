@@ -27,10 +27,7 @@ class StepRadial extends StatelessWidget {
                           cornerStyle: CornerStyle.bothCurve,
                           color: Colors.orange,
                           gradient: SweepGradient(
-                            colors: [
-                              Color.fromARGB(255, 243, 177, 177),
-                              Color.fromARGB(255, 234, 108, 108)
-                            ],
+                            colors: [Color.fromARGB(255, 243, 177, 177), Color.fromARGB(255, 234, 108, 108)],
                             stops: [0.1, 0.75],
                           ),
                         ),
@@ -57,7 +54,6 @@ class StepRadial extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 25,
-                                  color: Colors.black,
                                 ),
                               ),
                             ],
@@ -88,7 +84,6 @@ class StepRadial extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            color: Colors.black,
                           ),
                         ),
                         Text('kcal')
@@ -106,7 +101,6 @@ class StepRadial extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            color: Colors.black,
                           ),
                         ),
                         Text('Active time')
@@ -121,7 +115,6 @@ class StepRadial extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            color: Colors.black,
                           ),
                         ),
                         Text('km')
