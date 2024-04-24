@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/pages/home_screen.dart';
+import 'package:flutter_diet_app/screens/welcome_page.dart';
 import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeData _currentTheme = ThemeData.light();
+  late ThemeData _currentTheme;
+
+  ThemeProvider() {
+    // Başlangıçta varsayılan tema olarak LighTema'yı kullan
+    _currentTheme = LighTema().theme;
+  }
 
   ThemeData get currentTheme => _currentTheme;
 
   void toggleTheme() {
-    _currentTheme = _currentTheme == ThemeData.light() ? ThemeData.dark() : ThemeData.light();
+    _currentTheme =
+        _currentTheme == LighTema().theme ? ThemeData.dark() : LighTema().theme;
+    notifyListeners();
+  }
+
+  // Özel LighTema'yı kullanarak temayı ayarla
+  void setCustomTheme() {
+    _currentTheme = LighTema().theme;
     notifyListeners();
   }
 }
@@ -18,7 +31,7 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -33,6 +46,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: themeProvider._currentTheme,
-        home: const NavbarTheme());
+        home: const WelcomePage());
   }
 }

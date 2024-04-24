@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/main.dart';
+import 'package:flutter_diet_app/screens/welcome_page.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatelessWidget {
@@ -27,7 +28,8 @@ class SideMenu extends StatelessWidget {
             accountEmail: null,
             decoration: const BoxDecoration(
               color: Colors.blue,
-              image: DecorationImage(fit: BoxFit.fill, image: AssetImage('assets/back.jpg')),
+              image: DecorationImage(
+                  fit: BoxFit.fill, image: AssetImage('assets/back.jpg')),
             ),
           ),
           ListTile(
@@ -41,9 +43,8 @@ class SideMenu extends StatelessWidget {
             onTap: () {},
           ),
           ListTile(
-            // TEMA AYARI
             leading: SizedBox(
-              width: 20, // Sabit bir genişlik atayarak diğer ListTile'larla uyumlu hale getirin
+              width: 20,
               child: IconButton(
                 padding: const EdgeInsets.only(right: 20),
                 onPressed: () {
@@ -70,7 +71,9 @@ class SideMenu extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.credit_card),
             title: const Text('Hesap Tipi'),
-            onTap: () {},
+            onTap: () {
+              _showPremiumDialog(context);
+            },
           ),
           const Divider(
             color: Colors.grey,
@@ -89,12 +92,52 @@ class SideMenu extends StatelessWidget {
             color: Colors.grey,
           ),
           ListTile(
-            title: const Text('Çıkış'),
-            leading: const Icon(Icons.exit_to_app),
-            onTap: () {},
+            leading: SizedBox(
+              width: 20,
+              child: IconButton(
+                  padding: const EdgeInsets.only(right: 20),
+                  onPressed: () {},
+                  icon: const Icon(Icons.exit_to_app)),
+            ),
+            title: const Text('Çıkış Yap'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WelcomePage(),
+                ),
+              );
+            },
           ),
         ],
       ),
     );
   }
+}
+
+void _showPremiumDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Hesap Tipi'),
+        content:
+            const Text('Hesabınızı Premium\'a yükseltmek istiyor musunuz?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Premium Ol'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Vazgeç'),
+          ),
+        ],
+      );
+    },
+  );
 }
