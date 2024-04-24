@@ -227,13 +227,15 @@ class _NavbarThemeState extends State<NavbarTheme>
           child: Card(
             elevation: 5, // Kartın yükseltilmiş gölge efekti
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15), // Kartın köşelerinin yuvarlatılması
+              borderRadius: BorderRadius.circular(
+                  15), // Kartın köşelerinin yuvarlatılması
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  String result = await _barcodeScannerService.scanBarcodeNormal();
+                  String result =
+                      await _barcodeScannerService.scanBarcodeNormal();
                 },
                 label: const Text('Barkod Tarayıcı'),
                 icon: const Icon(Icons.camera_alt_outlined),
@@ -282,8 +284,8 @@ class _RadialGraph extends StatelessWidget {
                 cornerStyle: CornerStyle.bothCurve,
                 color: Colors.orange,
                 gradient: SweepGradient(colors: [
-                  Color.fromARGB(222, 113, 144, 219),
-                  Color.fromARGB(222, 63, 118, 246)
+                  Color.fromARGB(222, 255, 192, 203),
+                  Color.fromARGB(222, 228, 99, 142)
                 ], stops: [
                   0.1,
                   0.75

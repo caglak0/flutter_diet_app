@@ -28,8 +28,8 @@ class StepRadial extends StatelessWidget {
                           color: Colors.orange,
                           gradient: SweepGradient(
                             colors: [
-                              Color.fromARGB(222, 113, 144, 219),
-                              Color.fromARGB(222, 63, 118, 246)
+                              Color.fromARGB(222, 255, 192, 203),
+                              Color.fromARGB(222, 228, 99, 142)
                             ],
                             stops: [0.1, 0.75],
                           ),

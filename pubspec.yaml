@@ -41,7 +41,7 @@ dependencies:
   table_calendar: ^3.1.1
   #Takvim için
   intl: ^0.19.0  
-  flutter_local_notifications: ^17.0.0
+  flutter_local_notifications: ^17.1.0
   #barcode
   flutter_barcode_scanner: ^2.0.0
   #profil
