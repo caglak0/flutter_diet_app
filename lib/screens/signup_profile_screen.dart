@@ -1,9 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/screens/bki_screen.dart';
+import 'package:flutter_diet_app/service/auth_service.dart';
 import 'package:flutter_diet_app/widgets/custom_scaffold.dart';
 
 class SignUpProfileScreen extends StatefulWidget {
-  const SignUpProfileScreen({super.key});
+  const SignUpProfileScreen(
+      {super.key,
+      required this.email,
+      required this.password,
+      required this.name,
+      required this.surname});
+  final String email, password, name, surname;
 
   @override
   State<SignUpProfileScreen> createState() => _SignUpProfileScreenState();
@@ -15,6 +23,9 @@ class _SignUpProfileScreenState extends State<SignUpProfileScreen> {
   final TextEditingController _kiloController = TextEditingController();
   final TextEditingController _boyController = TextEditingController();
   final TextEditingController _yasController = TextEditingController();
+  final firebaseAuth = FirebaseAuth.instance;
+  late String gender, email, password, name, surname;
+  late int kilo, size, age;
 
   @override
   void dispose() {
@@ -22,6 +33,15 @@ class _SignUpProfileScreenState extends State<SignUpProfileScreen> {
     _boyController.dispose();
     _yasController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    email = widget.email;
+    password = widget.password;
+    name = widget.name;
+    surname = widget.surname;
   }
 
   @override
@@ -60,6 +80,9 @@ class _SignUpProfileScreenState extends State<SignUpProfileScreen> {
                       const SizedBox(height: 25.0),
                       DropdownButtonFormField<String>(
                         value: _selectedCinsiyet,
+                        onSaved: (value) {
+                          gender = value!;
+                        },
                         decoration:
                             const InputDecoration(labelText: 'Cinsiyet'),
                         onChanged: (String? value) {
@@ -87,6 +110,11 @@ class _SignUpProfileScreenState extends State<SignUpProfileScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) {
+                          if (value != null && value.isNotEmpty) {
+                            kilo = int.parse(value);
+                          }
+                        },
                         decoration: const InputDecoration(
                           labelText: 'Kilo',
                           hintText: 'Kilonuzu giriniz',
@@ -103,6 +131,11 @@ class _SignUpProfileScreenState extends State<SignUpProfileScreen> {
                             return 'Boy maksimum 250 olmalı';
                           }
                           return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null && value.isNotEmpty) {
+                            size = int.parse(value);
+                          }
                         },
                         decoration: const InputDecoration(
                           labelText: 'Boy',
@@ -121,6 +154,11 @@ class _SignUpProfileScreenState extends State<SignUpProfileScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) {
+                          if (value != null && value.isNotEmpty) {
+                            age = int.parse(value);
+                          }
+                        },
                         decoration: const InputDecoration(
                           labelText: 'Yaş',
                           hintText: 'Yaşınızı Giriniz',
@@ -133,13 +171,24 @@ class _SignUpProfileScreenState extends State<SignUpProfileScreen> {
                           SizedBox(
                             width: 70,
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 Future.delayed(const Duration(seconds: 5));
                                 if (_formSignupProfileKey.currentState!
                                     .validate()) {
+                                  _formSignupProfileKey.currentState!.save();
                                   int kilo = int.parse(_kiloController.text);
                                   int boy = int.parse(_boyController.text);
                                   int yas = int.parse(_yasController.text);
+                                  final result = AuthService().signUp(
+                                      email,
+                                      name,
+                                      surname,
+                                      password,
+                                      gender,
+                                      kilo,
+                                      size,
+                                      age);
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
