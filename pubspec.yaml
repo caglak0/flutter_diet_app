@@ -42,6 +42,9 @@ dependencies:
   #Takvim için
   intl: ^0.19.0  
   flutter_local_notifications: ^17.1.0
+  #bildirim için 
+  shared_preferences: ^2.2.3
+  firebase_messaging: ^14.9.2
   #barcode
   flutter_barcode_scanner: ^2.0.0
   #profil
@@ -50,6 +53,7 @@ dependencies:
   provider: ^6.1.2
   #icons
   font_awesome_flutter: ^10.7.0
+
 
 dev_dependencies:
   flutter_test:

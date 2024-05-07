@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReminderScreen extends StatefulWidget {
   const ReminderScreen({Key? key}) : super(key: key);
@@ -11,16 +11,8 @@ class ReminderScreen extends StatefulWidget {
 }
 
 class _ReminderScreenState extends State<ReminderScreen> {
-  final List<List<TimeOfDay>> _reminderTimesList = [
-    [
-      const TimeOfDay(hour: 8, minute: 0)
-    ], // Fiziksel Hareket Hatırlatıcısı varsayılan saat
-    [const TimeOfDay(hour: 10, minute: 0)] // Su Hatırlatıcısı varsayılan saat
-  ];
-  final List<List<bool>> _isReminderOn = [
-    [false], // Fiziksel Hareket Hatırlatıcısı durumu
-    [false] // Su Hatırlatıcısı durumu
-  ];
+  List<List<TimeOfDay>> _reminderTimesList = [[], []];
+  List<List<bool>> _isReminderOn = [[], []];
 
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
@@ -29,6 +21,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
     super.initState();
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     _initializeLocalNotifications();
+    _loadData();
   }
 
   void _initializeLocalNotifications() {
@@ -39,11 +32,42 @@ class _ReminderScreenState extends State<ReminderScreen> {
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> storedTimes = prefs.getStringList('reminderTimes') ?? [];
+    List<bool> storedStatuses =
+        prefs.getStringList('isReminderOn')?.map((e) => e == 'true').toList() ??
+            [];
+
+    setState(() {
+      for (int i = 0; i < storedTimes.length; i++) {
+        var parts = storedTimes[i].split(':');
+        _reminderTimesList[i ~/ 2].add(
+            TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1])));
+        _isReminderOn[i ~/ 2].add(storedStatuses[i]);
+      }
+    });
+  }
+
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> storedTimes = _reminderTimesList
+        .expand((list) => list.map((time) => '${time.hour}:${time.minute}'))
+        .toList();
+    List<String> storedStatuses = _isReminderOn
+        .expand((list) => list.map((status) => status.toString()))
+        .toList();
+
+    await prefs.setStringList('reminderTimes', storedTimes);
+    await prefs.setStringList('isReminderOn', storedStatuses);
+  }
+
   void _addReminder(int index) {
     setState(() {
       _reminderTimesList[index].add(TimeOfDay.now());
       _isReminderOn[index].add(true);
     });
+    _saveData();
   }
 
   void _removeReminder(int index, int innerIndex) {
@@ -51,6 +75,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
       _reminderTimesList[index].removeAt(innerIndex);
       _isReminderOn[index].removeAt(innerIndex);
     });
+    _saveData();
   }
 
   @override
@@ -84,10 +109,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            child: Text(title,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ),
           ListView.builder(
             shrinkWrap: true,
@@ -95,17 +119,13 @@ class _ReminderScreenState extends State<ReminderScreen> {
             itemCount: times.length,
             itemBuilder: (BuildContext context, int innerIndex) {
               return _buildReminderRow(
-                times[innerIndex],
-                _isReminderOn[index][innerIndex],
-                (value) {
-                  setState(() {
-                    _isReminderOn[index][innerIndex] = value;
-                  });
-                },
-                () => _selectTime(context, times, index, innerIndex),
-                () => _removeReminder(
-                    index, innerIndex), // silme işlevselliği eklendi
-              );
+                  times[innerIndex], _isReminderOn[index][innerIndex], (value) {
+                setState(() {
+                  _isReminderOn[index][innerIndex] = value;
+                });
+                _saveData();
+              }, () => _selectTime(context, times, index, innerIndex),
+                  () => _removeReminder(index, innerIndex));
             },
           ),
           Padding(
@@ -132,18 +152,11 @@ class _ReminderScreenState extends State<ReminderScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Text(
-              'Hatırlatma Saati: ${time.format(context)}',
-            ),
+            child: Text('Hatırlatma Saati: ${time.format(context)}'),
           ),
-          Switch(
-            value: isReminderOn,
-            onChanged: onChanged,
-          ),
+          Switch(value: isReminderOn, onChanged: onChanged),
           IconButton(
-            icon: const Icon(Icons.clear, size: 18), // X ikonunu küçülttük
-            onPressed: onRemove, // Silme işlevselliği burada çağrılıyor
-          ),
+              icon: const Icon(Icons.clear, size: 18), onPressed: onRemove),
         ],
       ),
       onTap: onTap,
@@ -159,15 +172,13 @@ class _ReminderScreenState extends State<ReminderScreen> {
     if (pickedTime != null) {
       setState(() {
         times[innerIndex] = pickedTime;
-        _isReminderOn[index][innerIndex] =
-            true; // Saat seçildiğinde hatırlatıcıyı etkinleştir
+        _isReminderOn[index][innerIndex] = true;
       });
+      _saveData();
     }
   }
 }
 
 void main() {
-  runApp(const MaterialApp(
-    home: ReminderScreen(),
-  ));
+  runApp(const MaterialApp(home: ReminderScreen()));
 }
