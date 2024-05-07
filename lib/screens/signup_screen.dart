@@ -13,6 +13,7 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   final _formSignupKey = GlobalKey<FormState>();
+  late String name, surname, email = '', password = '';
   late Color colors = Colors.black12;
 
   @override
@@ -53,13 +54,41 @@ class _SignupScreenState extends State<SignupScreen> {
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Lütfen İsminizi ve Soyisminizi Giriniz';
+                            return 'Lütfen İsminizi Giriniz';
                           }
                           return null;
                         },
+                        onSaved: (value) {
+                          name = value!;
+                        },
                         decoration: InputDecoration(
-                          label: const Text('İsim ve Soyisim'),
-                          hintText: 'Lütfen İsminizi ve Soyisminizi Giriniz',
+                          label: const Text('İsim '),
+                          hintText: 'Lütfen İsminizi Giriniz',
+                          hintStyle: const TextStyle(color: Colors.black26),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: colors),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: colors),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 25.0),
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Lütfen Soyisminizi Giriniz';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          surname = value!;
+                        },
+                        decoration: InputDecoration(
+                          label: const Text('Soyisim'),
+                          hintText: 'Lütfen Soyisminizi Giriniz',
                           hintStyle: const TextStyle(color: Colors.black26),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(color: colors),
@@ -82,6 +111,9 @@ class _SignupScreenState extends State<SignupScreen> {
                             return 'Lütfen geçerli bir email adresi giriniz';
                           }
                           return null;
+                        },
+                        onSaved: (value) {
+                          email = value!;
                         },
                         decoration: InputDecoration(
                           label: const Text('Email'),
@@ -109,6 +141,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) {
+                          password = value!;
+                        },
                         decoration: InputDecoration(
                           label: const Text('Şifre'),
                           hintText: 'Şifre Giriniz',
@@ -130,14 +165,20 @@ class _SignupScreenState extends State<SignupScreen> {
                           SizedBox(
                             width: 70,
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 Future.delayed(const Duration(seconds: 5));
                                 if (_formSignupKey.currentState!.validate()) {
+                                  _formSignupKey.currentState!.save();
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignUpProfileScreen(),
+                                      builder: (context) => SignUpProfileScreen(
+                                        email: email,
+                                        password: password,
+                                        name: name,
+                                        surname: surname,
+                                      ),
                                     ),
                                   );
                                 }

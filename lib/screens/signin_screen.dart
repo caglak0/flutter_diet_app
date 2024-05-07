@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/pages/home_screen.dart';
+import 'package:flutter_diet_app/service/auth_service.dart';
 import 'package:flutter_diet_app/widgets/custom_scaffold.dart';
 import 'package:flutter_diet_app/screens/signup_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
@@ -14,27 +15,31 @@ class SigninScreen extends StatefulWidget {
 class _SigninScreenState extends State<SigninScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
+  final firebaseAuth = FirebaseAuth.instance;
+  late String email, password;
 
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-        child: Column(
-      children: [
-        const Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 10,
+      child: Column(
+        children: [
+          const Expanded(
+            flex: 1,
+            child: SizedBox(
+              height: 10,
+            ),
           ),
-        ),
-        Expanded(
+          Expanded(
             flex: 7,
             child: Container(
               padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
               decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40.0),
-                      topRight: Radius.circular(40.0))),
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40.0),
+                  topRight: Radius.circular(40.0),
+                ),
+              ),
               child: SingleChildScrollView(
                 child: Form(
                   key: _formSignInKey,
@@ -43,9 +48,10 @@ class _SigninScreenState extends State<SigninScreen> {
                       const Text(
                         'Giriş Yap',
                         style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            color: Color.fromARGB(255, 52, 120, 54)),
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                          color: Color.fromARGB(255, 52, 120, 54),
+                        ),
                       ),
                       const SizedBox(
                         height: 25.0,
@@ -61,18 +67,22 @@ class _SigninScreenState extends State<SigninScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) {
+                          email = value!;
+                        },
                         decoration: InputDecoration(
-                            label: const Text('Email'),
-                            hintText: 'Email giriniz',
-                            hintStyle: const TextStyle(color: Colors.black26),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10)),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10))),
+                          label: const Text('Email'),
+                          hintText: 'Email giriniz',
+                          hintStyle: const TextStyle(color: Colors.black26),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.black12),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.black12),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 25.0,
@@ -87,6 +97,9 @@ class _SigninScreenState extends State<SigninScreen> {
                             return 'Şifre en az 4 en fazla 8 karakter olmalıdır';
                           }
                           return null;
+                        },
+                        onSaved: (value) {
+                          password = value!;
                         },
                         decoration: InputDecoration(
                           label: const Text('Şifre'),
@@ -149,22 +162,34 @@ class _SigninScreenState extends State<SigninScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Future.delayed(const Duration(seconds: 5));
+                          onPressed: () async {
                             if (_formSignInKey.currentState!.validate() &&
                                 rememberPassword) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const NavbarTheme(),
-                                ),
-                              );
-                            } else if (!rememberPassword) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Bilgilerinizi Kontrol Ediniz')),
-                              );
+                              _formSignInKey.currentState!.save();
+                              final result =
+                                  await AuthService().signIn(email, password);
+                              if (result == 'success') {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const NavbarTheme()),
+                                    (route) => false);
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text("Hata"),
+                                        content: Text(result!),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("Geri Don"))
+                                        ],
+                                      );
+                                    });
+                              }
                             }
                           },
                           child: const Text('Giriş Yap'),
@@ -173,55 +198,6 @@ class _SigninScreenState extends State<SigninScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
-                            ),
-                            child: Text(
-                              'Giriş Seçenekleri',
-                              style: TextStyle(
-                                color: Colors.black45,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 25.0),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Icon(
-                            FontAwesomeIcons.apple,
-                            size: 35,
-                          ),
-                          Icon(
-                            FontAwesomeIcons.google,
-                            size: 35,
-                          ),
-                          Icon(
-                            FontAwesomeIcons.facebook,
-                            color: Colors.blue,
-                            size: 35,
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 25.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -254,8 +230,10 @@ class _SigninScreenState extends State<SigninScreen> {
                   ),
                 ),
               ),
-            ))
-      ],
-    ));
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
