@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final firebaseAuth = FirebaseAuth.instance;
   final firebaseFirestore = FirebaseFirestore.instance;
+  static String message = "";
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<String?> forgotPassword(String email) async {
     String? res;
@@ -16,6 +19,39 @@ class AuthService {
       }
     }
     return res;
+  }
+
+  Future<void> signInWithGoogle() async {
+    User? user;
+
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        final UserCredential userCredential =
+            await firebaseAuth.signInWithCredential(credential);
+        user = userCredential.user;
+
+        if (user != null) {
+          message = 'Sign in with Google success';
+        } else {
+          message = 'Failed to sign in with Google';
+        }
+      } else {
+        message = 'Google sign in aborted';
+      }
+    } catch (e) {
+      message = 'Failed to sign in with Google: $e';
+    }
   }
 
   Future<String?> signIn(String email, String password) async {

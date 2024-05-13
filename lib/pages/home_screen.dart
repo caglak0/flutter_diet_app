@@ -145,14 +145,27 @@ class _NavbarThemeState extends State<NavbarTheme>
   }
 
   Widget _buildTabView(_MyTabViews view) {
+    String greeting;
+    var hour = DateTime.now().hour;
+    if (hour < 5) {
+      greeting = 'İyi Geceler 💤';
+    } else if (hour < 12) {
+      greeting = 'Günaydın ☀️';
+    } else if (hour < 18) {
+      greeting = 'İyi Öğlenler ✨';
+    } else {
+      greeting = 'İyi Akşamlar 🌙';
+    }
     switch (view) {
       case _MyTabViews.anasayfa:
         return Scaffold(
-          drawer: const SideMenu(),
+          drawer: const SideMenu(
+            userId: 'SJqXeILPd8RpGOmEJl3A',
+          ),
           appBar: AppBar(
-            title: const Text(
-              'Günaydın ✨',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            title: Text(
+              greeting,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             actions: [
               Row(
@@ -225,11 +238,9 @@ class _NavbarThemeState extends State<NavbarTheme>
       case _MyTabViews.barkodTarayici:
         return Center(
           child: Card(
-            elevation: 5, // Kartın yükseltilmiş gölge efekti
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                  15), // Kartın köşelerinin yuvarlatılması
-            ),
+            elevation: 5,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton.icon(
@@ -256,7 +267,12 @@ class _NavbarThemeState extends State<NavbarTheme>
         );
       case _MyTabViews.profil:
         return const Column(
-          children: [Expanded(child: ProfileScreen())],
+          children: [
+            Expanded(
+                child: ProfileScreen(
+              userId: 'SJqXeILPd8RpGOmEJl3A',
+            ))
+          ],
         );
     }
   }

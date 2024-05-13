@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/pages/home_screen.dart';
 import 'package:flutter_diet_app/service/auth_service.dart';
 import 'package:flutter_diet_app/widgets/custom_scaffold.dart';
 import 'package:flutter_diet_app/screens/signup_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
@@ -14,9 +14,55 @@ class SigninScreen extends StatefulWidget {
 
 class _SigninScreenState extends State<SigninScreen> {
   final _formSignInKey = GlobalKey<FormState>();
-  bool rememberPassword = true;
-  final firebaseAuth = FirebaseAuth.instance;
-  late String email, password;
+  bool rememberPassword = false; // default to false
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  _loadSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      rememberPassword = prefs.getBool('rememberPassword') ?? false;
+      if (rememberPassword) {
+        _emailController.text = prefs.getString('email') ?? '';
+        _passwordController.text = prefs.getString('password') ?? '';
+      }
+    });
+  }
+
+  _saveCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('rememberPassword', rememberPassword);
+    if (rememberPassword) {
+      prefs.setString('email', _emailController.text);
+      prefs.setString('password', _passwordController.text);
+    } else {
+      prefs.remove('email');
+      prefs.remove('password');
+    }
+  }
+
+  _checkLoginStatus() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    String? result = await AuthService().signIn(email, password);
+    if (result == 'success') {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const NavbarTheme()),
+          (route) => false);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkLoginStatus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +103,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         height: 25.0,
                       ),
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Lütfen Email Giriniz';
@@ -66,9 +113,6 @@ class _SigninScreenState extends State<SigninScreen> {
                             return 'Lütfen geçerli bir email adresi giriniz';
                           }
                           return null;
-                        },
-                        onSaved: (value) {
-                          email = value!;
                         },
                         decoration: InputDecoration(
                           label: const Text('Email'),
@@ -88,6 +132,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         height: 25.0,
                       ),
                       TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -97,9 +142,6 @@ class _SigninScreenState extends State<SigninScreen> {
                             return 'Şifre en az 4 en fazla 8 karakter olmalıdır';
                           }
                           return null;
-                        },
-                        onSaved: (value) {
-                          password = value!;
                         },
                         decoration: InputDecoration(
                           label: const Text('Şifre'),
@@ -136,6 +178,7 @@ class _SigninScreenState extends State<SigninScreen> {
                                   setState(() {
                                     rememberPassword = value!;
                                   });
+                                  _saveCredentials();
                                 },
                               ),
                               const Text(
@@ -163,11 +206,11 @@ class _SigninScreenState extends State<SigninScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_formSignInKey.currentState!.validate() &&
-                                rememberPassword) {
+                            if (_formSignInKey.currentState!.validate()) {
                               _formSignInKey.currentState!.save();
-                              final result =
-                                  await AuthService().signIn(email, password);
+                              final result = await AuthService().signIn(
+                                  _emailController.text,
+                                  _passwordController.text);
                               if (result == 'success') {
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/screens/signup_profile_screen.dart';
 import 'package:flutter_diet_app/screens/signin_screen.dart';
+import 'package:flutter_diet_app/service/auth_service.dart';
 import 'package:flutter_diet_app/widgets/custom_scaffold.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -216,13 +217,22 @@ class _SignupScreenState extends State<SignupScreen> {
                         ],
                       ),
                       const SizedBox(height: 25.0),
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(FontAwesomeIcons.apple, size: 35),
-                          Icon(FontAwesomeIcons.google, size: 35),
-                          Icon(FontAwesomeIcons.facebook,
-                              color: Colors.blue, size: 35),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(FontAwesomeIcons.apple, size: 35),
+                          ),
+                          IconButton(
+                              onPressed: () => AuthService().signInWithGoogle(),
+                              icon: const Icon(FontAwesomeIcons.google,
+                                  size: 35)),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(FontAwesomeIcons.facebook,
+                                color: Colors.blue, size: 35),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 25.0),
