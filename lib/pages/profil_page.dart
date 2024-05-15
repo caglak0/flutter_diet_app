@@ -16,12 +16,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late String size = '';
   late String name = '';
   late String age = '';
+  late String targetKilo = '';
 
   TextEditingController kiloController = TextEditingController();
   TextEditingController genderController = TextEditingController();
   TextEditingController sizeController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
+  TextEditingController targetKiloController = TextEditingController();
 
   @override
   void initState() {
@@ -36,18 +38,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .doc(widget.userId)
           .get();
 
+      final data = userSnapshot.data() as Map<String, dynamic>?;
+
       setState(() {
-        kilo = userSnapshot.get('kilo').toString();
-        gender = userSnapshot.get('gender').toString();
-        size = userSnapshot.get('size').toString();
-        name = userSnapshot.get('name').toString();
-        age = userSnapshot.get('age').toString();
+        kilo = data != null && data.containsKey('kilo')
+            ? data['kilo'].toString()
+            : '';
+        gender = data != null && data.containsKey('gender')
+            ? data['gender'].toString()
+            : '';
+        size = data != null && data.containsKey('size')
+            ? data['size'].toString()
+            : '';
+        name = data != null && data.containsKey('name')
+            ? data['name'].toString()
+            : '';
+        age = data != null && data.containsKey('age')
+            ? data['age'].toString()
+            : '';
+        targetKilo = data != null && data.containsKey('targetKilo')
+            ? data['targetKilo'].toString()
+            : '';
 
         kiloController.text = kilo;
         genderController.text = gender;
         sizeController.text = size;
         nameController.text = name;
         ageController.text = age;
+        targetKiloController.text = targetKilo;
       });
     } catch (e) {
       print("Firestore'dan verileri alırken hata oluştu: $e");
@@ -159,57 +177,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: const Text('Bilgileri Düzenle'),
             ),
             const SizedBox(height: 20),
-            const SizedBox(
-              width: double.infinity,
-              child: Card(
-                elevation: 4,
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Hedef',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
+            Card(
+              elevation: 4,
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Hedef',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            height: 20,
-                            child: LinearProgressIndicator(
-                              value: 0.5,
-                              backgroundColor: Colors.transparent,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.blue),
-                              semanticsLabel: '50%',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          width: double.infinity,
+                          height: 20,
+                          child: LinearProgressIndicator(
+                            value: 0.5,
+                            backgroundColor: Colors.transparent,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.blue),
+                            semanticsLabel: '50%',
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              kilo,
+                              style: const TextStyle(fontSize: 16),
                             ),
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Başlangıç',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              Text(
-                                'Hedef',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            Text(
+                              targetKilo.isNotEmpty ? targetKilo : 'Hedef',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 10),
@@ -226,6 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: ListBody(
                             children: <Widget>[
                               TextFormField(
+                                controller: targetKiloController,
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                     labelText: 'Yeni Hedef'),
@@ -241,7 +257,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: const Text('İptal'),
                           ),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              setState(() {
+                                targetKilo = targetKiloController.text;
+                              });
+                              await _saveTargetKilo();
                               Navigator.of(context).pop();
                             },
                             child: const Text('Kaydet'),
@@ -304,6 +324,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'kilo': kiloController.text,
         'size': sizeController.text,
         'age': ageController.text,
+      });
+    } catch (e) {
+      print("Veritabanına kaydetme işlemi başarısız oldu: $e");
+    }
+  }
+
+  Future<void> _saveTargetKilo() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .update({
+        'targetKilo': targetKiloController.text,
       });
     } catch (e) {
       print("Veritabanına kaydetme işlemi başarısız oldu: $e");
