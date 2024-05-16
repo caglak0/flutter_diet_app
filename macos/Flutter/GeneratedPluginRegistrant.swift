@@ -14,10 +14,7 @@ import flutter_local_notifications
 import geolocator_apple
 import google_sign_in_ios
 import path_provider_foundation
-<<<<<<< HEAD
 import share_plus
-=======
->>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
 import shared_preferences_foundation
 import url_launcher_macos
 
@@ -31,10 +28,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   GeolocatorPlugin.register(with: registry.registrar(forPlugin: "GeolocatorPlugin"))
   FLTGoogleSignInPlugin.register(with: registry.registrar(forPlugin: "FLTGoogleSignInPlugin"))
   PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
-<<<<<<< HEAD
   SharePlusMacosPlugin.register(with: registry.registrar(forPlugin: "SharePlusMacosPlugin"))
-=======
->>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
   SharedPreferencesPlugin.register(with: registry.registrar(forPlugin: "SharedPreferencesPlugin"))
   UrlLauncherPlugin.register(with: registry.registrar(forPlugin: "UrlLauncherPlugin"))
 }

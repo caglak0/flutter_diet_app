@@ -14,12 +14,7 @@ import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatefulWidget {
-<<<<<<< HEAD
   const SideMenu({super.key});
-=======
-  const SideMenu({Key? key, required this.userId}) : super(key: key);
-  final String userId;
->>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
 
   @override
   State<SideMenu> createState() => _SideMenuState();
@@ -33,12 +28,8 @@ class _SideMenuState extends State<SideMenu> {
   @override
   void initState() {
     super.initState();
-<<<<<<< HEAD
-    fetchUserData();
-=======
     _loadProfileImage();
     fetchUserData(); // initState içinde çağırın
->>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
   }
 
   Future<void> _loadProfileImage() async {
@@ -163,7 +154,7 @@ class _SideMenuState extends State<SideMenu> {
             leading: const Icon(Icons.credit_card),
             title: const Text('Hesap Tipi'),
             onTap: () {
-              _showPremiumDialog(context);
+              showPremiumDialog(context);
             },
           ),
           const Divider(
@@ -185,7 +176,6 @@ class _SideMenuState extends State<SideMenu> {
             color: Colors.grey,
           ),
           ListTile(
-<<<<<<< HEAD
             leading: SizedBox(
               width: 20,
               child: IconButton(
@@ -205,11 +195,6 @@ class _SideMenuState extends State<SideMenu> {
             title: const Text('Çıkış Yap'),
             onTap: () async {
               await FirebaseAuth.instance.signOut();
-=======
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text('Çıkış'),
-            onTap: () {
->>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -223,15 +208,6 @@ class _SideMenuState extends State<SideMenu> {
     );
   }
 
-<<<<<<< HEAD
-  void _showShareOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return const ShareOptionsPage();
-      },
-    );
-=======
   Future<void> _getImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -247,33 +223,57 @@ class _SideMenuState extends State<SideMenu> {
         _profileImage = path;
       });
     }
->>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
   }
 
-  void _showPremiumDialog(BuildContext context) {
-    showDialog(
+  void _showShareOptions(BuildContext context) {
+    showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Hesap Tipi'),
-          content:
-              const Text('Hesabınızı Premium\'a yükseltmek istiyor musunuz?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Premium Ol'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Vazgeç'),
-            ),
-          ],
-        );
+        return const ShareOptionsPage();
       },
     );
+    Future<void> getImage() async {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final path = join(directory.path, _profileImageName);
+
+        // Save the selected image to the application documents directory
+        final file = File(pickedFile.path);
+        await file.copy(path);
+
+        setState(() {
+          _profileImage = path;
+        });
+      }
+    }
   }
+}
+
+void showPremiumDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Hesap Tipi'),
+        content:
+            const Text('Hesabınızı Premium\'a yükseltmek istiyor musunuz?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Premium Ol'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Vazgeç'),
+          ),
+        ],
+      );
+    },
+  );
 }

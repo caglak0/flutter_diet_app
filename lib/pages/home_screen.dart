@@ -139,13 +139,7 @@ class _NavbarThemeState extends State<NavbarTheme>
     switch (view) {
       case _MyTabViews.anasayfa:
         return Scaffold(
-<<<<<<< HEAD
           drawer: const SideMenu(),
-=======
-          drawer: SideMenu(
-            key: GlobalKey(), userId: '',
-          ),
->>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
           appBar: AppBar(
             title: Text(
               greeting,
