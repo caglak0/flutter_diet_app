@@ -30,6 +30,7 @@ class _NavbarThemeState extends State<NavbarTheme>
 
   @override
   Widget build(BuildContext context) {
+  
     return DefaultTabController(
       length: _MyTabViews.values.length,
       child: Scaffold(
@@ -147,7 +148,9 @@ class _NavbarThemeState extends State<NavbarTheme>
     switch (view) {
       case _MyTabViews.anasayfa:
         return Scaffold(
-          drawer: const SideMenu(),
+          drawer: SideMenu(
+            key: GlobalKey(),
+          ),
           appBar: AppBar(
             title: const Text(
               'Günaydın ✨',
