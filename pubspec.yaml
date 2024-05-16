@@ -56,10 +56,6 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   #profil
   fl_chart: ^0.35.0
-<<<<<<< HEAD
-  http: ^1.2.1
-  url_launcher: ^6.2.6
-=======
   #provider
   provider: ^6.1.2
   #icons
@@ -69,11 +65,10 @@ dependencies:
   cloud_firestore: ^4.17.3
   firebase_core: ^2.31.0
   pedometer: ^4.0.1
-  http: ^1.2.1
   google_sign_in: ^6.2.1
   #Adım sayar
   permission_handler: ^11.3.1
->>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
+  url_launcher: ^6.2.6
 
 dev_dependencies:
   flutter_test:

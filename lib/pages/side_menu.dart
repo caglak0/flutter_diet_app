@@ -1,32 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:flutter_diet_app/pages/nearby_pharmacies_page.dart';
 import 'package:flutter_diet_app/pages/nearby_hospitals_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:path/path.dart';
-
-class SideMenu extends StatefulWidget {
-  const SideMenu({Key? key}) : super(key: key);
-
-  @override
-  _SideMenuState createState() => _SideMenuState();
-}
-
-class _SideMenuState extends State<SideMenu> {
-  String? _profileImage;
-  final String _profileImageName = "profile_image.jpg";
-=======
 import 'package:flutter_diet_app/main.dart';
 import 'package:flutter_diet_app/screens/good_bye_screen.dart';
 import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatefulWidget {
-  const SideMenu({super.key, required this.userId});
+  const SideMenu({Key? key, required this.userId}) : super(key: key);
   final String userId;
 
   @override
@@ -34,14 +21,15 @@ class SideMenu extends StatefulWidget {
 }
 
 class _SideMenuState extends State<SideMenu> {
+  String? _profileImage;
+  final String _profileImageName = "profile_image.jpg";
   late String name = '';
->>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
 
   @override
   void initState() {
     super.initState();
-<<<<<<< HEAD
     _loadProfileImage();
+    fetchUserData(); // initState içinde çağırın
   }
 
   Future<void> _loadProfileImage() async {
@@ -51,8 +39,7 @@ class _SideMenuState extends State<SideMenu> {
       setState(() {
         _profileImage = path;
       });
-=======
-    fetchUserData(); // initState içinde çağırın
+    }
   }
 
   Future<void> fetchUserData() async {
@@ -71,7 +58,6 @@ class _SideMenuState extends State<SideMenu> {
       });
     } catch (e) {
       print("Firestore'dan verileri alırken hata oluştu: $e");
->>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
     }
   }
 
@@ -83,13 +69,12 @@ class _SideMenuState extends State<SideMenu> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-<<<<<<< HEAD
           GestureDetector(
             onTap: () {
               _getImage();
             },
             child: UserAccountsDrawerHeader(
-              accountName: const Text('Kullanıcı Adı'),
+              accountName: Text(name.isEmpty ? 'Kullanıcı Adı' : name),
               currentAccountPicture: CircleAvatar(
                 child: ClipOval(
                   child: _profileImage != null
@@ -115,33 +100,11 @@ class _SideMenuState extends State<SideMenu> {
                   image: AssetImage('assets/back.jpg'), // Arka plan resmi sabit
                 ),
               ),
-=======
-          UserAccountsDrawerHeader(
-            accountName: Text(name),
-            currentAccountPicture: CircleAvatar(
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/profil.jpg',
-                  fit: BoxFit.cover,
-                  width: 90,
-                  height: 90,
-                ),
-              ),
-            ),
-            accountEmail: null,
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: AssetImage('assets/back.jpg'),
-              ),
->>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
             ),
           ),
           ListTile(
             leading: const Icon(Icons.local_pharmacy_outlined),
             title: const Text('Nöbetçi Eczane'),
-<<<<<<< HEAD
             onTap: () {
               Navigator.push(
                 context,
@@ -161,13 +124,7 @@ class _SideMenuState extends State<SideMenu> {
                   builder: (context) => const NearbyHospitalsPage(),
                 ),
               );
-=======
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.local_hospital_outlined),
-            title: const Text('Hastane'),
-            onTap: () {},
+            },
           ),
           ListTile(
             leading: SizedBox(
@@ -193,7 +150,6 @@ class _SideMenuState extends State<SideMenu> {
             title: const Text('Tema'),
             onTap: () {
               themeProvider.toggleTheme();
->>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
             },
           ),
           ListTile(
@@ -220,24 +176,8 @@ class _SideMenuState extends State<SideMenu> {
             color: Colors.grey,
           ),
           ListTile(
-<<<<<<< HEAD
-            leading: const Icon(Icons.nights_stay_outlined),
-            title: const Text('Görünüm'),
-            onTap: () {},
-          ),
-          ListTile(
-            title: const Text('Çıkış'),
             leading: const Icon(Icons.exit_to_app),
-            onTap: () {},
-=======
-            leading: SizedBox(
-              width: 20,
-              child: IconButton(
-                  padding: const EdgeInsets.only(right: 20),
-                  onPressed: () {},
-                  icon: const Icon(Icons.exit_to_app)),
-            ),
-            title: const Text('Çıkış Yap'),
+            title: const Text('Çıkış'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
@@ -246,17 +186,15 @@ class _SideMenuState extends State<SideMenu> {
                 ),
               );
             },
->>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
           ),
         ],
       ),
     );
   }
 
-<<<<<<< HEAD
   Future<void> _getImage() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       final directory = await getApplicationDocumentsDirectory();
       final path = join(directory.path, _profileImageName);
@@ -269,7 +207,8 @@ class _SideMenuState extends State<SideMenu> {
         _profileImage = path;
       });
     }
-=======
+  }
+
   void _showPremiumDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -295,6 +234,5 @@ class _SideMenuState extends State<SideMenu> {
         );
       },
     );
->>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
   }
 }

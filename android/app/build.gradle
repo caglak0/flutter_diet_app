@@ -68,10 +68,6 @@ flutter {
     source '../..'
 }
 
-<<<<<<< HEAD
-
-=======
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 }
->>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
