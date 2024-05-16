@@ -44,7 +44,10 @@ dependencies:
   flutter_local_notifications: ^17.1.0
   #bildirim için 
   shared_preferences: ^2.2.3
+  timezone: ^0.9.3
   firebase_messaging: ^14.9.2
+  fluttertoast: ^8.2.5
+  rxdart: ^0.27.7
   #barcode
   flutter_barcode_scanner: ^2.0.0
   #profil
