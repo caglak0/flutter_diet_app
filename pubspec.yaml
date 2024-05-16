@@ -30,11 +30,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  google_maps_flutter: ^2.2.0
+  cupertino_icons: ^1.0.6
+  #lokasyon bilgilerini erişimi sağlar
+  geolocator: ^7.0.3
+  #Kullancının galeriye erieşbilmesini sağlar
+  image_picker: ^0.8.4+4
+  path_provider: ^2.0.9
+  path: ^1.8.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
+ 
   floating_bottom_bar: ^0.0.3
   syncfusion_flutter_charts: ^25.1.35
   syncfusion_flutter_gauges: ^25.1.35
@@ -58,12 +65,15 @@ dependencies:
   cloud_firestore: ^4.17.3
   firebase_core: ^2.31.0
   pedometer: ^4.0.1
-  http: ^1.2.1
   google_sign_in: ^6.2.1
   #Adım sayar
   permission_handler: ^11.3.1
+<<<<<<< HEAD
   #Davet Et
   share_plus: ^9.0.0
+=======
+  url_launcher: ^6.2.6
+>>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
 
 dev_dependencies:
   flutter_test:

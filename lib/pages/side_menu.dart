@@ -1,6 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_diet_app/pages/nearby_pharmacies_page.dart';
+import 'package:flutter_diet_app/pages/nearby_hospitals_page.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:path/path.dart';
 import 'package:flutter_diet_app/main.dart';
 import 'package:flutter_diet_app/pages/%C4%B1nvite_friends_page.dart';
 import 'package:flutter_diet_app/screens/good_bye_screen.dart';
@@ -8,19 +14,41 @@ import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatefulWidget {
+<<<<<<< HEAD
   const SideMenu({super.key});
+=======
+  const SideMenu({Key? key, required this.userId}) : super(key: key);
+  final String userId;
+>>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
 
   @override
   State<SideMenu> createState() => _SideMenuState();
 }
 
 class _SideMenuState extends State<SideMenu> {
+  String? _profileImage;
+  final String _profileImageName = "profile_image.jpg";
   late String name = '';
 
   @override
   void initState() {
     super.initState();
+<<<<<<< HEAD
     fetchUserData();
+=======
+    _loadProfileImage();
+    fetchUserData(); // initState içinde çağırın
+>>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
+  }
+
+  Future<void> _loadProfileImage() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = join(directory.path, _profileImageName);
+    if (File(path).existsSync()) {
+      setState(() {
+        _profileImage = path;
+      });
+    }
   }
 
   Future<void> fetchUserData() async {
@@ -48,36 +76,62 @@ class _SideMenuState extends State<SideMenu> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(name),
-            currentAccountPicture: CircleAvatar(
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/profil.jpg',
-                  fit: BoxFit.cover,
-                  width: 90,
-                  height: 90,
+          GestureDetector(
+            onTap: () {
+              _getImage();
+            },
+            child: UserAccountsDrawerHeader(
+              accountName: Text(name.isEmpty ? 'Kullanıcı Adı' : name),
+              currentAccountPicture: CircleAvatar(
+                child: ClipOval(
+                  child: _profileImage != null
+                      ? Image.file(
+                          File(_profileImage!),
+                          fit: BoxFit.cover,
+                          width: 90,
+                          height: 90,
+                        )
+                      : Image.asset(
+                          'assets/profil.jpg',
+                          fit: BoxFit.cover,
+                          width: 90,
+                          height: 90,
+                        ),
                 ),
               ),
-            ),
-            accountEmail: null,
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: AssetImage('assets/back.jpg'),
+              accountEmail: null,
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: AssetImage('assets/back.jpg'), // Arka plan resmi sabit
+                ),
               ),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.local_pharmacy_outlined),
             title: const Text('Nöbetçi Eczane'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NearbyPharmaciesPage(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.local_hospital_outlined),
             title: const Text('Hastane'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NearbyHospitalsPage(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: SizedBox(
@@ -131,6 +185,7 @@ class _SideMenuState extends State<SideMenu> {
             color: Colors.grey,
           ),
           ListTile(
+<<<<<<< HEAD
             leading: SizedBox(
               width: 20,
               child: IconButton(
@@ -150,6 +205,11 @@ class _SideMenuState extends State<SideMenu> {
             title: const Text('Çıkış Yap'),
             onTap: () async {
               await FirebaseAuth.instance.signOut();
+=======
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('Çıkış'),
+            onTap: () {
+>>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -163,6 +223,7 @@ class _SideMenuState extends State<SideMenu> {
     );
   }
 
+<<<<<<< HEAD
   void _showShareOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -170,6 +231,23 @@ class _SideMenuState extends State<SideMenu> {
         return const ShareOptionsPage();
       },
     );
+=======
+  Future<void> _getImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      final path = join(directory.path, _profileImageName);
+
+      // Save the selected image to the application documents directory
+      final file = File(pickedFile.path);
+      await file.copy(path);
+
+      setState(() {
+        _profileImage = path;
+      });
+    }
+>>>>>>> 14aa519ad2cfc6702c19873970b1ea07e521abfa
   }
 
   void _showPremiumDialog(BuildContext context) {
