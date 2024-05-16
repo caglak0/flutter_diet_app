@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_diet_app/details/barkod_scanner.dart';
+import 'package:flutter_diet_app/details/radial_graph.dart';
 import 'package:flutter_diet_app/details/step_radial.dart';
 import 'package:flutter_diet_app/details/water.dart';
+import 'package:flutter_diet_app/pages/analiz_page.dart';
 import 'package:flutter_diet_app/pages/asistan_app.dart';
-import 'package:flutter_diet_app/pages/barcode.dart';
 import 'package:flutter_diet_app/pages/profil_page.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:flutter_diet_app/pages/search_page.dart';
 import 'package:flutter_diet_app/pages/side_menu.dart';
 
 class NavbarTheme extends StatefulWidget {
@@ -19,7 +21,6 @@ class _NavbarThemeState extends State<NavbarTheme>
   late final TabController _tabController;
   final double _notchedMargin = 10;
   List<IconData> icons = [];
-  final BarcodeScannerService _barcodeScannerService = BarcodeScannerService();
 
   @override
   void initState() {
@@ -100,32 +101,11 @@ class _NavbarThemeState extends State<NavbarTheme>
   Widget _buildCardWidget(String title, String cardTitle) {
     return InkWell(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(cardTitle),
-              content: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Arama yapın',
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                  ]),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Kapat'),
-                ),
-              ],
-            );
-          },
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SearchPage(title: cardTitle),
+          ),
         );
       },
       child: Card(
@@ -145,16 +125,32 @@ class _NavbarThemeState extends State<NavbarTheme>
   }
 
   Widget _buildTabView(_MyTabViews view) {
+    String greeting;
+    var hour = DateTime.now().hour;
+    if (hour < 5) {
+      greeting = 'İyi Geceler 💤';
+    } else if (hour < 12) {
+      greeting = 'Günaydın ☀️';
+    } else if (hour < 18) {
+      greeting = 'İyi Öğlenler ✨';
+    } else {
+      greeting = 'İyi Akşamlar 🌙';
+    }
     switch (view) {
       case _MyTabViews.anasayfa:
         return Scaffold(
+<<<<<<< HEAD
           drawer: SideMenu(
             key: GlobalKey(),
+=======
+          drawer: const SideMenu(
+            userId: 'SJqXeILPd8RpGOmEJl3A',
+>>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
           ),
           appBar: AppBar(
-            title: const Text(
-              'Günaydın ✨',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            title: Text(
+              greeting,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             actions: [
               Row(
@@ -201,7 +197,7 @@ class _NavbarThemeState extends State<NavbarTheme>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _RadialGraph(context: context),
+                  RadialGraph(context: context),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -225,79 +221,21 @@ class _NavbarThemeState extends State<NavbarTheme>
           ]),
         );
       case _MyTabViews.barkodTarayici:
-        return Center(
-          child: ElevatedButton(
-            onPressed: () async {
-              String result = await _barcodeScannerService.scanBarcodeNormal();
-            },
-            child: const Text('Scan Barcode'),
-          ),
-        );
+        return const Column(children: [Expanded(child: BarkodScanner())]);
       case _MyTabViews.analiz:
-        return const Center(
-          child: Text('analiz'),
+        return const Column(
+          children: [Expanded(child: AnalizScreen())],
         );
       case _MyTabViews.profil:
         return const Column(
-          children: [Expanded(child: ProfileScreen())],
+          children: [
+            Expanded(
+                child: ProfileScreen(
+              userId: 'SJqXeILPd8RpGOmEJl3A',
+            ))
+          ],
         );
     }
-  }
-}
-
-class _RadialGraph extends StatelessWidget {
-  const _RadialGraph({
-    required this.context,
-  });
-
-  final BuildContext context;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width / 2,
-      height: MediaQuery.of(context).size.height / 3,
-      child: SfRadialGauge(
-        axes: [
-          RadialAxis(
-            pointers: const [
-              RangePointer(
-                value: 50,
-                width: 25,
-                cornerStyle: CornerStyle.bothCurve,
-                color: Colors.orange,
-                gradient: SweepGradient(colors: [
-                  Color.fromARGB(255, 243, 177, 177),
-                  Color.fromARGB(255, 234, 108, 108)
-                ], stops: [
-                  0.1,
-                  0.75
-                ]),
-              )
-            ],
-            axisLineStyle: const AxisLineStyle(
-                thickness: 25, color: Color.fromARGB(255, 224, 217, 217)),
-            startAngle: 5,
-            endAngle: 5,
-            showLabels: false,
-            showTicks: false,
-            annotations: const [
-              GaugeAnnotation(
-                widget: Text(
-                  '50%',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                      color: Colors.black),
-                ),
-                angle: 270,
-                positionFactor: 0.1,
-              )
-            ],
-          ),
-        ],
-      ),
-    );
   }
 }
 

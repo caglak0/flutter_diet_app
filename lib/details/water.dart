@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WaterCard extends StatefulWidget {
   const WaterCard({super.key});
@@ -8,13 +9,31 @@ class WaterCard extends StatefulWidget {
 }
 
 class _WaterCardState extends State<WaterCard> {
-  List<bool> isBlue = List.generate(8, (index) => false);
+  late List<bool> isBlue;
   int totalMl = 0;
 
-  void toggleColor(int index) {
+  @override
+  void initState() {
+    super.initState();
+    isBlue = List.generate(8, (index) => false);
+    loadGlassStatus();
+  }
+
+  Future<void> loadGlassStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isBlue =
+          List.generate(8, (index) => prefs.getBool('glass$index') ?? false);
+      totalMl = isBlue.where((element) => element).length * 250;
+    });
+  }
+
+  void toggleColor(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       for (int i = 0; i < isBlue.length; i++) {
         isBlue[i] = i <= index;
+        prefs.setBool('glass$i', isBlue[i]);
       }
 
       totalMl = (index + 1) * 250;

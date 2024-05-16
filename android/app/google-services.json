@@ -1,0 +1,29 @@
+{
+    "project_info": {
+      "project_number": "270789494028",
+      "project_id": "health-app-6a717",
+      "storage_bucket": "health-app-6a717.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:270789494028:android:bb13412c7df79143e7f529",
+          "android_client_info": {
+            "package_name": "com.example.flutter_diet_app"
+          }
+        },
+        "oauth_client": [],
+        "api_key": [
+          {
+            "current_key": "AIzaSyBpfuZbok1EPI2OuozwX2O_x8izZO56exo"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": []
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }

@@ -145,7 +145,9 @@ class ChatMessage extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 200),
             padding: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
-              color: isUser ? Colors.white : Colors.green,
+              color: isUser
+                  ? Colors.white
+                  : const Color.fromARGB(222, 87, 135, 247),
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Text(

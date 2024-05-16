@@ -48,13 +48,32 @@ dependencies:
   table_calendar: ^3.1.1
   #Takvim için
   intl: ^0.19.0  
-  flutter_local_notifications: ^17.0.0
+  flutter_local_notifications: ^17.1.0
+  #bildirim için 
+  shared_preferences: ^2.2.3
+  firebase_messaging: ^14.9.2
   #barcode
   flutter_barcode_scanner: ^2.0.0
   #profil
   fl_chart: ^0.35.0
+<<<<<<< HEAD
   http: ^1.2.1
   url_launcher: ^6.2.6
+=======
+  #provider
+  provider: ^6.1.2
+  #icons
+  font_awesome_flutter: ^10.7.0
+  #firebase
+  firebase_auth: ^4.19.5
+  cloud_firestore: ^4.17.3
+  firebase_core: ^2.31.0
+  pedometer: ^4.0.1
+  http: ^1.2.1
+  google_sign_in: ^6.2.1
+  #Adım sayar
+  permission_handler: ^11.3.1
+>>>>>>> 6fa08eb04ca5dbf2da2a23975cd948aaeadfeeba
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +101,8 @@ flutter:
   assets:
   - assets/back.jpg
   - assets/profil.jpg
+  - assets/welcome.jpg
+  - assets/shoe.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
