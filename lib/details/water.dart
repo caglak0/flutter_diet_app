@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class WaterCard extends StatefulWidget {
@@ -8,21 +10,62 @@ class WaterCard extends StatefulWidget {
 }
 
 class _WaterCardState extends State<WaterCard> {
-  List<bool> isBlue = List.generate(8, (index) => false);
+  late List<bool> isBlue;
   int totalMl = 0;
 
-  void toggleColor(int index) {
-    setState(() {
-      for (int i = 0; i < isBlue.length; i++) {
-        isBlue[i] = i <= index;
-      }
+  final User? user = FirebaseAuth.instance.currentUser;
 
-      totalMl = (index + 1) * 250;
+  @override
+  void initState() {
+    super.initState();
+    isBlue = List.generate(8, (index) => false);
+    loadGlassStatus();
+  }
 
-      if (isBlue.every((element) => element) && totalMl >= 2000) {
-        showSuccessDialog();
+  Future<void> loadGlassStatus() async {
+    if (user != null) {
+      try {
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .get();
+
+        if (userSnapshot.exists) {
+          final data = userSnapshot.data() as Map<String, dynamic>?;
+
+          setState(() {
+            isBlue = List.generate(8, (index) => data?['glass$index'] ?? false);
+            totalMl = isBlue.where((element) => element).length * 250;
+          });
+        }
+      } catch (e) {
+        print("Error fetching glass status: $e");
       }
-    });
+    }
+  }
+
+  void toggleColor(int index) async {
+    if (user != null) {
+      try {
+        final userRef =
+            FirebaseFirestore.instance.collection('users').doc(user!.uid);
+
+        setState(() {
+          for (int i = 0; i < isBlue.length; i++) {
+            isBlue[i] = i <= index;
+            userRef.update({'glass$i': isBlue[i]});
+          }
+
+          totalMl = (index + 1) * 250;
+
+          if (isBlue.every((element) => element) && totalMl >= 2000) {
+            showSuccessDialog();
+          }
+        });
+      } catch (e) {
+        print("Error updating glass status: $e");
+      }
+    }
   }
 
   void showSuccessDialog() {

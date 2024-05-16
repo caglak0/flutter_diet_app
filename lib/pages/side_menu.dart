@@ -1,11 +1,63 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_diet_app/pages/nearby_pharmacies_page.dart';
+import 'package:flutter_diet_app/pages/nearby_hospitals_page.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:path/path.dart';
 import 'package:flutter_diet_app/main.dart';
-import 'package:flutter_diet_app/screens/welcome_page.dart';
+import 'package:flutter_diet_app/pages/%C4%B1nvite_friends_page.dart';
+import 'package:flutter_diet_app/screens/good_bye_screen.dart';
 import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 
-class SideMenu extends StatelessWidget {
+class SideMenu extends StatefulWidget {
   const SideMenu({super.key});
+
+  @override
+  State<SideMenu> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<SideMenu> {
+  String? _profileImage;
+  final String _profileImageName = "profile_image.jpg";
+  late String name = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileImage();
+    fetchUserData(); // initState içinde çağırın
+  }
+
+  Future<void> _loadProfileImage() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = join(directory.path, _profileImageName);
+    if (File(path).existsSync()) {
+      setState(() {
+        _profileImage = path;
+      });
+    }
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      String? userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+        setState(() {
+          name = userSnapshot.get('name').toString();
+        });
+      }
+    } catch (e) {
+      print("Firestore'dan verileri alırken hata oluştu: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,33 +67,62 @@ class SideMenu extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          UserAccountsDrawerHeader(
-            accountName: const Text('Kullanıcı Adı'),
-            currentAccountPicture: CircleAvatar(
+          GestureDetector(
+            onTap: () {
+              _getImage();
+            },
+            child: UserAccountsDrawerHeader(
+              accountName: Text(name.isEmpty ? 'Kullanıcı Adı' : name),
+              currentAccountPicture: CircleAvatar(
                 child: ClipOval(
-              child: Image.asset(
-                'assets/profil.jpg',
-                fit: BoxFit.cover,
-                width: 90,
-                height: 90,
+                  child: _profileImage != null
+                      ? Image.file(
+                          File(_profileImage!),
+                          fit: BoxFit.cover,
+                          width: 90,
+                          height: 90,
+                        )
+                      : Image.asset(
+                          'assets/profil.jpg',
+                          fit: BoxFit.cover,
+                          width: 90,
+                          height: 90,
+                        ),
+                ),
               ),
-            )),
-            accountEmail: null,
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-              image: DecorationImage(
-                  fit: BoxFit.fill, image: AssetImage('assets/back.jpg')),
+              accountEmail: null,
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: AssetImage('assets/back.jpg'), // Arka plan resmi sabit
+                ),
+              ),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.local_pharmacy_outlined),
             title: const Text('Nöbetçi Eczane'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NearbyPharmaciesPage(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.local_hospital_outlined),
             title: const Text('Hastane'),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NearbyHospitalsPage(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: SizedBox(
@@ -73,7 +154,7 @@ class SideMenu extends StatelessWidget {
             leading: const Icon(Icons.credit_card),
             title: const Text('Hesap Tipi'),
             onTap: () {
-              _showPremiumDialog(context);
+              showPremiumDialog(context);
             },
           ),
           const Divider(
@@ -87,7 +168,9 @@ class SideMenu extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.share),
             title: const Text('Arkadaşlarını Davet Et'),
-            onTap: () {},
+            onTap: () {
+              _showShareOptions(context);
+            },
           ),
           const Divider(
             color: Colors.grey,
@@ -96,16 +179,26 @@ class SideMenu extends StatelessWidget {
             leading: SizedBox(
               width: 20,
               child: IconButton(
-                  padding: const EdgeInsets.only(right: 20),
-                  onPressed: () {},
-                  icon: const Icon(Icons.exit_to_app)),
+                padding: const EdgeInsets.only(right: 20),
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const GoodByePage(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.exit_to_app),
+              ),
             ),
             title: const Text('Çıkış Yap'),
-            onTap: () {
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const WelcomePage(),
+                  builder: (context) => const GoodByePage(),
                 ),
               );
             },
@@ -114,9 +207,51 @@ class SideMenu extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _getImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      final path = join(directory.path, _profileImageName);
+
+      // Save the selected image to the application documents directory
+      final file = File(pickedFile.path);
+      await file.copy(path);
+
+      setState(() {
+        _profileImage = path;
+      });
+    }
+  }
+
+  void _showShareOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return const ShareOptionsPage();
+      },
+    );
+    Future<void> getImage() async {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final path = join(directory.path, _profileImageName);
+
+        // Save the selected image to the application documents directory
+        final file = File(pickedFile.path);
+        await file.copy(path);
+
+        setState(() {
+          _profileImage = path;
+        });
+      }
+    }
+  }
 }
 
-void _showPremiumDialog(BuildContext context) {
+void showPremiumDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {

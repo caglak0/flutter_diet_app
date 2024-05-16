@@ -29,12 +29,18 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Telefon arama intent-filtresi eklendi -->
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+<<<<<<< HEAD
 
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
@@ -51,6 +57,11 @@
             android:name="com.dexterous.flutterlocalnotifications.FlutterLocalNotificationService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true" />
+=======
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyALn1XallLRBqFp_Xr_7cu-c-NOhrnVWsA"/>
+>>>>>>> 6d49d3bf73bb795833c4029a5126c6b365e73a74
     </application>
        
 
@@ -66,4 +77,6 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 </manifest>
