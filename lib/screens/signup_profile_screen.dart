@@ -5,12 +5,14 @@ import 'package:flutter_diet_app/service/auth_service.dart';
 import 'package:flutter_diet_app/widgets/custom_scaffold.dart';
 
 class SignUpProfileScreen extends StatefulWidget {
-  const SignUpProfileScreen(
-      {super.key,
-      required this.email,
-      required this.password,
-      required this.name,
-      required this.surname});
+  const SignUpProfileScreen({
+    super.key,
+    required this.email,
+    required this.password,
+    required this.name,
+    required this.surname,
+  });
+
   final String email, password, name, surname;
 
   @override
@@ -172,30 +174,27 @@ class _SignUpProfileScreenState extends State<SignUpProfileScreen> {
                             width: 70,
                             child: ElevatedButton(
                               onPressed: () async {
-                                Future.delayed(const Duration(seconds: 5));
                                 if (_formSignupProfileKey.currentState!
                                     .validate()) {
                                   _formSignupProfileKey.currentState!.save();
-                                  int kilo = int.parse(_kiloController.text);
-                                  int boy = int.parse(_boyController.text);
-                                  int yas = int.parse(_yasController.text);
-                                  final result = AuthService().signUp(
-                                      email,
-                                      name,
-                                      surname,
-                                      password,
-                                      gender,
-                                      kilo,
-                                      size,
-                                      age);
+                                  AuthService().signUp(
+                                    email,
+                                    name,
+                                    surname,
+                                    password,
+                                    gender,
+                                    kilo,
+                                    size,
+                                    age,
+                                  );
 
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => BkiScreen(
                                         kilo: kilo,
-                                        boy: boy,
-                                        yas: yas,
+                                        boy: size,
+                                        yas: age,
                                         cinsiyet: _selectedCinsiyet!,
                                       ),
                                     ),

@@ -138,9 +138,7 @@ class _NavbarThemeState extends State<NavbarTheme>
     switch (view) {
       case _MyTabViews.anasayfa:
         return Scaffold(
-          drawer: const SideMenu(
-            userId: 'SJqXeILPd8RpGOmEJl3A',
-          ),
+          drawer: const SideMenu(),
           appBar: AppBar(
             title: Text(
               greeting,
@@ -222,12 +220,7 @@ class _NavbarThemeState extends State<NavbarTheme>
         );
       case _MyTabViews.profil:
         return const Column(
-          children: [
-            Expanded(
-                child: ProfileScreen(
-              userId: 'SJqXeILPd8RpGOmEJl3A',
-            ))
-          ],
+          children: [Expanded(child: ProfileScreen())],
         );
     }
   }

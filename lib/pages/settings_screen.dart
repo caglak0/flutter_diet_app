@@ -6,9 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SettingScreen extends StatefulWidget {
   const SettingScreen({
     super.key,
-    required this.userId,
   });
-  final String userId;
 
   @override
   _SettingScreenState createState() => _SettingScreenState();
@@ -22,6 +20,7 @@ class _SettingScreenState extends State<SettingScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController surnameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -31,20 +30,22 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> _fetchUserData() async {
     try {
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.userId)
-          .get();
+      if (user != null) {
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .get();
 
-      setState(() {
-        name = userSnapshot.get('name').toString();
-        surname = userSnapshot.get('surname').toString();
-        email = userSnapshot.get('email').toString();
+        setState(() {
+          name = userSnapshot.get('name').toString();
+          surname = userSnapshot.get('surname').toString();
+          email = userSnapshot.get('email').toString();
 
-        nameController.text = name;
-        surnameController.text = surname;
-        emailController.text = email;
-      });
+          nameController.text = name;
+          surnameController.text = surname;
+          emailController.text = email;
+        });
+      }
     } catch (e) {
       print("Firestore'dan verileri alırken hata oluştu: $e");
     }

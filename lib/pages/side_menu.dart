@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/main.dart';
+import 'package:flutter_diet_app/pages/%C4%B1nvite_friends_page.dart';
 import 'package:flutter_diet_app/screens/good_bye_screen.dart';
 import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatefulWidget {
-  const SideMenu({super.key, required this.userId});
-  final String userId;
+  const SideMenu({super.key});
 
   @override
   State<SideMenu> createState() => _SideMenuState();
@@ -20,23 +20,21 @@ class _SideMenuState extends State<SideMenu> {
   @override
   void initState() {
     super.initState();
-    fetchUserData(); // initState içinde çağırın
+    fetchUserData();
   }
 
   Future<void> fetchUserData() async {
     try {
-      // Firestore'dan oturum açmış kullanıcının UID'sini al
       String? userId = FirebaseAuth.instance.currentUser?.uid;
-
-      // Firestore'dan kullanıcı belgesini al
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.userId)
-          .get();
-
-      setState(() {
-        name = userSnapshot.get('name').toString();
-      });
+      if (userId != null) {
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+        setState(() {
+          name = userSnapshot.get('name').toString();
+        });
+      }
     } catch (e) {
       print("Firestore'dan verileri alırken hata oluştu: $e");
     }
@@ -125,7 +123,9 @@ class _SideMenuState extends State<SideMenu> {
           ListTile(
             leading: const Icon(Icons.share),
             title: const Text('Arkadaşlarını Davet Et'),
-            onTap: () {},
+            onTap: () {
+              _showShareOptions(context);
+            },
           ),
           const Divider(
             color: Colors.grey,
@@ -134,12 +134,22 @@ class _SideMenuState extends State<SideMenu> {
             leading: SizedBox(
               width: 20,
               child: IconButton(
-                  padding: const EdgeInsets.only(right: 20),
-                  onPressed: () {},
-                  icon: const Icon(Icons.exit_to_app)),
+                padding: const EdgeInsets.only(right: 20),
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const GoodByePage(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.exit_to_app),
+              ),
             ),
             title: const Text('Çıkış Yap'),
-            onTap: () {
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -150,6 +160,15 @@ class _SideMenuState extends State<SideMenu> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showShareOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return const ShareOptionsPage();
+      },
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter_diet_app/service/auth_service.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class StepRadial extends StatefulWidget {
@@ -19,32 +20,59 @@ class _StepRadialState extends State<StepRadial> {
 
   AuthService authServices = AuthService();
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  late String _todaySteps = '0', _savedSteps;
-
-  int? lastDay = 0;
+  late String _todaySteps = '0';
+  late String _savedSteps = '0';
 
   late int _currentDay;
+  late int _lastDay;
 
-  loadData() async {
+  User? get currentUser => auth.currentUser;
+
+  Future<void> loadData() async {
     final SharedPreferences prefs = await _prefs;
-    _currentDay = prefs.getInt('currentDay') ?? DateTime.now().day;
+    _currentDay = DateTime.now().day;
     _todaySteps = prefs.getString('todaySteps') ?? '0';
+    _lastDay = prefs.getInt('lastDay') ?? _currentDay;
+    if (currentUser != null) {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .get();
+
+      if (userSnapshot.exists) {
+        final data = userSnapshot.data() as Map<String, dynamic>?;
+        if (data != null) {
+          _savedSteps = data['savedSteps'] ?? _savedSteps;
+          _todaySteps = data['todaySteps'] ?? _todaySteps;
+        }
+      }
+    }
   }
 
   @override
-  initState() {
+  void initState() {
+    super.initState();
     loadData();
     initPlatformState();
-    super.initState();
   }
 
   @override
   void dispose() {
-    _prefs.then((SharedPreferences prefs) {
-      prefs.setString('todaySteps', _todaySteps);
-      prefs.setInt('currentDay', _currentDay);
-    });
+    saveDataToFirestore();
     super.dispose();
+  }
+
+  Future<void> saveDataToFirestore() async {
+    if (currentUser != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .set({
+        'todaySteps': _todaySteps,
+        'savedSteps': _savedSteps,
+        'lastDay': _lastDay,
+      }, SetOptions(merge: true));
+    }
   }
 
   Future<void> onStepCount(StepCount event) async {
@@ -53,13 +81,13 @@ class _StepRadialState extends State<StepRadial> {
     prefs.setString('savedSteps', _savedSteps);
 
     _currentDay = DateTime.now().day;
-    lastDay = prefs.getInt('lastDay') ?? _currentDay;
-    prefs.setInt('lastDay', lastDay!);
-    if (_currentDay != lastDay) {
-      lastDay = _currentDay;
+    _lastDay = prefs.getInt('lastDay') ?? _currentDay;
+    prefs.setInt('lastDay', _lastDay);
+    if (_currentDay != _lastDay) {
+      _lastDay = _currentDay;
       _savedSteps = event.steps.toString();
       _todaySteps = '0';
-      prefs.setInt('lastDay', lastDay!);
+      prefs.setInt('lastDay', _lastDay);
       prefs.setString('savedSteps', _savedSteps);
       prefs.setString('todaySteps', _todaySteps);
     }
@@ -67,6 +95,8 @@ class _StepRadialState extends State<StepRadial> {
     setState(() {
       _todaySteps = (event.steps - int.parse(_savedSteps)).toString();
     });
+
+    await saveDataToFirestore();
   }
 
   void onStepCountError(error) {
@@ -114,10 +144,7 @@ class _StepRadialState extends State<StepRadial> {
 
     return PopScope(
       onPopInvoked: (bool isPop) async {
-        await _prefs.then((SharedPreferences prefs) {
-          prefs.setString('todaySteps', _todaySteps);
-          prefs.setInt('currentDay', _currentDay);
-        });
+        await saveDataToFirestore();
         return Future.value();
       },
       child: Padding(

@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class WaterCard extends StatefulWidget {
   const WaterCard({super.key});
@@ -12,6 +13,8 @@ class _WaterCardState extends State<WaterCard> {
   late List<bool> isBlue;
   int totalMl = 0;
 
+  final User? user = FirebaseAuth.instance.currentUser;
+
   @override
   void initState() {
     super.initState();
@@ -20,28 +23,49 @@ class _WaterCardState extends State<WaterCard> {
   }
 
   Future<void> loadGlassStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isBlue =
-          List.generate(8, (index) => prefs.getBool('glass$index') ?? false);
-      totalMl = isBlue.where((element) => element).length * 250;
-    });
+    if (user != null) {
+      try {
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .get();
+
+        if (userSnapshot.exists) {
+          final data = userSnapshot.data() as Map<String, dynamic>?;
+
+          setState(() {
+            isBlue = List.generate(8, (index) => data?['glass$index'] ?? false);
+            totalMl = isBlue.where((element) => element).length * 250;
+          });
+        }
+      } catch (e) {
+        print("Error fetching glass status: $e");
+      }
+    }
   }
 
   void toggleColor(int index) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      for (int i = 0; i < isBlue.length; i++) {
-        isBlue[i] = i <= index;
-        prefs.setBool('glass$i', isBlue[i]);
-      }
+    if (user != null) {
+      try {
+        final userRef =
+            FirebaseFirestore.instance.collection('users').doc(user!.uid);
 
-      totalMl = (index + 1) * 250;
+        setState(() {
+          for (int i = 0; i < isBlue.length; i++) {
+            isBlue[i] = i <= index;
+            userRef.update({'glass$i': isBlue[i]});
+          }
 
-      if (isBlue.every((element) => element) && totalMl >= 2000) {
-        showSuccessDialog();
+          totalMl = (index + 1) * 250;
+
+          if (isBlue.every((element) => element) && totalMl >= 2000) {
+            showSuccessDialog();
+          }
+        });
+      } catch (e) {
+        print("Error updating glass status: $e");
       }
-    });
+    }
   }
 
   void showSuccessDialog() {
