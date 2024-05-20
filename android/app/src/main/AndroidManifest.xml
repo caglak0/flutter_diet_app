@@ -4,6 +4,8 @@
 <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 <uses-permission android:name="android.permission.WAKE_LOCK" /> 
+<uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+
 
     <application
         android:label="flutter_diet_app"
