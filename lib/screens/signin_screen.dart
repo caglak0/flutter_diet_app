@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/pages/home_screen.dart';
+import 'package:flutter_diet_app/screens/forget_password_screen.dart';
 import 'package:flutter_diet_app/service/auth_service.dart';
 import 'package:flutter_diet_app/widgets/custom_scaffold.dart';
 import 'package:flutter_diet_app/screens/signup_screen.dart';
@@ -45,23 +46,6 @@ class _SigninScreenState extends State<SigninScreen> {
       prefs.remove('email');
       prefs.remove('password');
     }
-  }
-
-  _checkLoginStatus() async {
-    String email = _emailController.text;
-    String password = _passwordController.text;
-    String? result = await AuthService().signIn(email, password);
-    if (result == 'success') {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const NavbarTheme()),
-          (route) => false);
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _checkLoginStatus();
   }
 
   @override
@@ -175,10 +159,12 @@ class _SigninScreenState extends State<SigninScreen> {
                               Checkbox(
                                 value: rememberPassword,
                                 onChanged: (bool? value) {
-                                  setState(() {
-                                    rememberPassword = value!;
-                                  });
-                                  _saveCredentials();
+                                  if (value != null) {
+                                    setState(() {
+                                      rememberPassword = value;
+                                    });
+                                    _saveCredentials();
+                                  }
                                 },
                               ),
                               const Text(
@@ -196,6 +182,14 @@ class _SigninScreenState extends State<SigninScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -209,29 +203,37 @@ class _SigninScreenState extends State<SigninScreen> {
                             if (_formSignInKey.currentState!.validate()) {
                               _formSignInKey.currentState!.save();
                               final result = await AuthService().signIn(
-                                  _emailController.text,
-                                  _passwordController.text);
+                                _emailController.text,
+                                _passwordController.text,
+                              );
                               if (result == 'success') {
+                                await _saveCredentials(); // Save credentials after successful login
+                                if (!mounted) {
+                                  return; // Ensure the widget is still in the widget tree
+                                }
                                 Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const NavbarTheme()),
-                                    (route) => false);
+                                  MaterialPageRoute(
+                                    builder: (context) => const NavbarTheme(),
+                                  ),
+                                  (route) => false,
+                                );
                               } else {
                                 showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: const Text("Hata"),
-                                        content: Text(result!),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text("Geri Don"))
-                                        ],
-                                      );
-                                    });
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text("Hata"),
+                                      content: Text(result ?? ''),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text("Geri Dön"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               }
                             }
                           },

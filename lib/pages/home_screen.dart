@@ -29,6 +29,7 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+  
     return DefaultTabController(
       length: _MyTabViews.values.length,
       child: Scaffold(
@@ -135,9 +136,7 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
     switch (view) {
       case _MyTabViews.anasayfa:
         return Scaffold(
-          drawer: const SideMenu(
-            userId: 'SJqXeILPd8RpGOmEJl3A',
-          ),
+          drawer: const SideMenu(),
           appBar: AppBar(
             title: Text(
               greeting,
@@ -218,12 +217,7 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
         );
       case _MyTabViews.profil:
         return const Column(
-          children: [
-            Expanded(
-                child: ProfileScreen(
-              userId: 'SJqXeILPd8RpGOmEJl3A',
-            ))
-          ],
+          children: [Expanded(child: ProfileScreen())],
         );
     }
   }

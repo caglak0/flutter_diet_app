@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/pages/home_screen.dart';
+import 'package:flutter_diet_app/screens/welcome_page.dart';
 import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -43,15 +44,16 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: themeProvider._currentTheme,
-        home: const NavbarTheme());
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: themeProvider._currentTheme,
+      home: const WelcomePage(),
+    );
   }
 }

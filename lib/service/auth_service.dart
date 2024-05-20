@@ -3,29 +3,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  final firebaseAuth = FirebaseAuth.instance;
-  final firebaseFirestore = FirebaseFirestore.instance;
-  static String message = "";
-  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<String?> forgotPassword(String email) async {
-    String? res;
     try {
-      await firebaseAuth.sendPasswordResetEmail(email: email);
-      print("Mail kutunuzu kontrol ediniz");
+      await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
+      return "Mail kutunuzu kontrol ediniz";
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
-        res = "Mail Zaten Kayıtlı.";
+        return "Mail Zaten Kayıtlı.";
       }
     }
-    return res;
+    return null;
   }
 
   Future<void> signInWithGoogle() async {
-    User? user;
-
     try {
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
@@ -35,53 +31,52 @@ class AuthService {
           idToken: googleSignInAuthentication.idToken,
         );
 
-        final UserCredential userCredential = await firebaseAuth.signInWithCredential(credential);
-        user = userCredential.user;
+        final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
+        final User? user = userCredential.user;
 
         if (user != null) {
-          message = 'Sign in with Google success';
-        } else {
-          message = 'Failed to sign in with Google';
+          await _saveUserData(user);
         }
-      } else {
-        message = 'Google sign in aborted';
       }
     } catch (e) {
-      message = 'Failed to sign in with Google: $e';
+      print('Failed to sign in with Google: $e');
     }
   }
 
   Future<String?> signIn(String email, String password) async {
-    String? res;
     try {
-      await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      res = "success";
+      final UserCredential userCredential =
+          await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        await fetchUserData(user);
+        return "success";
+      }
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "user-not-found":
-          res = "Kullanıcı Bulunamadı";
-          break;
+          return "Kullanıcı Bulunamadı";
         case "wrong-password":
-          res = "Hatalı Şifre";
-          break;
+          return "Hatalı Şifre";
         case "user-disabled":
-          res = "Kullanıcı Pasif";
-          break;
+          return "Kullanıcı Pasif";
         default:
-          res = "Bilgilerinizi kontrol edip tekrar deneyiniz.";
-          break;
+          return "Bilgilerinizi kontrol edip tekrar deneyiniz.";
       }
     }
-    return res;
+    return null;
   }
 
   Future<String?> signUp(
       String email, String name, String surname, String password, String gender, int kilo, int size, int age) async {
-    String? res;
     try {
-      final result = await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      try {
-        await firebaseFirestore.collection("users").add({
+      final UserCredential result =
+          await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      final User? user = result.user;
+
+      if (user != null) {
+        await _firebaseFirestore.collection("users").doc(user.uid).set({
           "email": email,
           "name": name,
           "surname": surname,
@@ -90,24 +85,43 @@ class AuthService {
           "size": size,
           "age": age,
         });
-      } catch (e) {
-        print("$e");
+        return "success";
       }
-      res = "success";
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "email-already-in-use":
-          res = "Mail Zaten Kayıtlı.";
-          break;
-        case "ERROR_INVALID_EMAIL":
+          return "Mail Zaten Kayıtlı.";
         case "invalid-email":
-          res = "Geçersiz Mail";
-          break;
+          return "Geçersiz Mail";
         default:
-          res = "Bir Hata İle Karşılaşıldı, Birazdan Tekrar Deneyiniz.";
-          break;
+          return "Bir Hata İle Karşılaşıldı, Birazdan Tekrar Deneyiniz.";
       }
     }
-    return res;
+    return null;
+  }
+
+  Future<void> _saveUserData(User user) async {
+    DocumentSnapshot userSnapshot = await _firebaseFirestore.collection('users').doc(user.uid).get();
+
+    if (!userSnapshot.exists) {
+      await _firebaseFirestore.collection('users').doc(user.uid).set({
+        "email": user.email,
+        "name": user.displayName ?? '',
+        "surname": '',
+        "gender": '',
+        "kilo": 0,
+        "size": 0,
+        "age": 0,
+      });
+    }
+  }
+
+  Future<Map<String, dynamic>?> fetchUserData(User user) async {
+    DocumentSnapshot userSnapshot = await _firebaseFirestore.collection('users').doc(user.uid).get();
+
+    if (userSnapshot.exists) {
+      return userSnapshot.data() as Map<String, dynamic>?;
+    }
+    return null;
   }
 }
