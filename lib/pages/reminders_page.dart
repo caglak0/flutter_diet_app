@@ -5,11 +5,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 class ReminderScreen extends StatefulWidget {
-  const ReminderScreen({Key? key, required this.userId}) : super(key: key);
+  const ReminderScreen({super.key, required this.userId});
   final String userId;
 
   @override
@@ -279,7 +277,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
         id: index * 1000 + innerIndex, // Benzersiz bir ID oluşturun
         title: 'Hatırlatıcı',
         body: 'Hatırlatma Zamanı Geldi!',
-        payload: 'reminder_payload_${index}_${innerIndex}',
+        payload: 'reminder_payload_${index}_$innerIndex',
         scheduledDateTime: scheduledDateTime,
         categoryIndex: categoryIndex,
       );

@@ -9,7 +9,7 @@ class AuthService {
 
   Future<String?> forgotPassword(String email) async {
     try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
       return "Mail kutunuzu kontrol ediniz";
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
