@@ -73,7 +73,9 @@ class _SettingScreenState extends State<SettingScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ReminderScreen()),
+                      builder: (context) => const ReminderScreen(
+                            userId: '',
+                          )),
                 );
               },
               child: Container(
@@ -90,57 +92,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     color: Colors.white,
                   ),
                 ),
-<<<<<<< HEAD
-                const SizedBox(height: 20.0),
-                const Text(
-                  'Soyisim:',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: 'Soyisminizi girin',
-                  ),
-                ),
-                const SizedBox(height: 20.0),
-                const Text(
-                  'Email:',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: 'Email adresinizi girin',
-                  ),
-                ),
-                const SizedBox(height: 20.0),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ReminderScreen(
-                              userId: 'SJqXeILPd8RpGOmEJl3A')),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: const Text(
-                      'Hatırlatıcılar',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-=======
               ),
->>>>>>> 6d49d3bf73bb795833c4029a5126c6b365e73a74
             ),
           ],
         ),

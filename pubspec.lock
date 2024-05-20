@@ -848,7 +848,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
-<<<<<<< HEAD
   rxdart:
     dependency: "direct main"
     description:
@@ -857,7 +856,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
-=======
   sanitize_html:
     dependency: transitive
     description:
@@ -882,7 +880,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
->>>>>>> 6d49d3bf73bb795833c4029a5126c6b365e73a74
   shared_preferences:
     dependency: "direct main"
     description:

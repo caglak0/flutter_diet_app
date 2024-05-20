@@ -84,9 +84,11 @@ class NotificationLogic {
 
     String notificationBody;
     if (categoryIndex == 0) {
-      notificationBody = 'Hadi Hareket Et';
+      notificationBody =
+          'Hadi Hareket Zamanı! Vücudun sana teşekkür edecek!🏃🏼‍♀️🏋🏼🚴🏼‍♀️';
     } else if (categoryIndex == 1) {
-      notificationBody = 'Su İçme Zamanı';
+      notificationBody =
+          'Su İçme Zamanı! Gün boyu enerji için su içmeyi unutma!💧';
     } else {
       notificationBody = 'Hatırlatma Zamanı Geldi!';
     }

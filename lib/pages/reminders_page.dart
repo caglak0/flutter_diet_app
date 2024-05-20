@@ -5,8 +5,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 class ReminderScreen extends StatefulWidget {
   const ReminderScreen({Key? key, required this.userId}) : super(key: key);
@@ -177,9 +175,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildReminderCard(
-                  'Fiziksel Hareket Hatırlatıcı', _reminderTimesList[0], 0),
+                  'Fiziksel Hareket Hatırlatıcısı', _reminderTimesList[0], 0),
               const SizedBox(height: 20.0),
-              _buildReminderCard('Su Hatırlatıcı', _reminderTimesList[1], 1),
+              _buildReminderCard('Su Hatırlatıcısı', _reminderTimesList[1], 1),
             ],
           ),
         ),
