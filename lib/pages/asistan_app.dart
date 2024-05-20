@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  const ChatScreen({super.key});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -17,57 +17,72 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Klavyenin kapanması için
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Kişisel Asistan')),
-        body: Column(
+        appBar: AppBar(
+          title: const Text('Medica\'ya Sor   👩‍💻'),
+          backgroundColor: const Color.fromARGB(255, 107, 132, 222),
+        ),
+        body: Stack(
           children: <Widget>[
-            Flexible(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                reverse: true,
-                itemBuilder: (_, int index) => _messages[index],
-                itemCount: _messages.length,
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      "assets/background.jpg"), // Görsel dosyasının yolunu buraya yazın
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            const Divider(height: 1.0),
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      controller: _textController,
-                      onSubmitted: _handleSubmitted,
-                      style: const TextStyle(fontSize: 18.0),
-                      decoration: const InputDecoration(
-                        hintText: "Mesajınızı buraya yazın...",
-                        border: InputBorder.none,
-                      ),
-                    ),
+            // İçerik
+            Column(
+              children: <Widget>[
+                Flexible(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    reverse: true,
+                    itemBuilder: (_, int index) => _messages[index],
+                    itemCount: _messages.length,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: GestureDetector(
-                      onTap: () => _handleSubmitted(_textController.text),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(30.0),
+                ),
+                const Divider(height: 1.0),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          controller: _textController,
+                          onSubmitted: _handleSubmitted,
+                          style: const TextStyle(fontSize: 18.0),
+                          decoration: const InputDecoration(
+                            hintText: "Mesajınızı buraya yazın...",
+                            border: InputBorder.none,
+                          ),
                         ),
-                        child: const Icon(Icons.send, color: Colors.white),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: GestureDetector(
+                          onTap: () => _handleSubmitted(_textController.text),
+                          child: Container(
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 72, 104, 219),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.send, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
@@ -77,18 +92,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _handleSubmitted(String text) async {
     _textController.clear();
-
-    // Add user message to chat screen
     _addMessage(text, true);
-
-    // Send user message to OpenAI API
     final response = await _sendMessageToAPI(text);
     if (response != null) {
       final botReply = response['choices'][0]['message']['content'];
-      // Add bot's reply to chat screen
       _addMessage(botReply, false);
     } else {
-      // Handle error, if any
       _addMessage('Sunucudan yanıt alınamadı.', false);
     }
   }
@@ -96,14 +105,16 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<Map<String, dynamic>?> _sendMessageToAPI(String message) async {
     try {
       final url = Uri.parse('https://api.openai.com/v1/chat/completions');
-      const apiKey = 'sk-proj-FWF9aes53umxjub5Tlx2T3BlbkFJasHiApBY4ngkxeLswCJ2'; 
+      const apiKey = 'sk-proj-FWF9aes53umxjub5Tlx2T3BlbkFJasHiApBY4ngkxeLswCJ2';
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $apiKey',
       };
       final body = json.encode({
         "model": "gpt-3.5-turbo",
-        "messages": [{"role": "user", "content": message}],
+        "messages": [
+          {"role": "user", "content": message}
+        ],
         "temperature": 0.7
       });
 
@@ -137,24 +148,46 @@ class ChatMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 14.0),
       child: Row(
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: <Widget>[
+          if (!isUser) ...[
+            const CircleAvatar(
+              backgroundColor: Color.fromARGB(255, 72, 104, 219),
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            const SizedBox(width: 10),
+          ],
           Container(
-            constraints: const BoxConstraints(maxWidth: 200),
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.7),
             padding: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               color: isUser
-                  ? Colors.white
-                  : const Color.fromARGB(222, 87, 135, 247),
-              borderRadius: BorderRadius.circular(10.0),
+                  ? const Color.fromARGB(255, 251, 255, 254)
+                  : const Color.fromARGB(222, 122, 193, 255),
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(12.0),
+                topRight: const Radius.circular(12.0),
+                bottomLeft: Radius.circular(isUser ? 12.0 : 0),
+                bottomRight: Radius.circular(isUser ? 0 : 12.0),
+              ),
             ),
             child: Text(
               text,
-              style: const TextStyle(fontSize: 18.0),
+              style: const TextStyle(
+                  fontSize: 16.0, color: Color.fromARGB(255, 30, 29, 29)),
             ),
           ),
+          if (isUser) ...[
+            const SizedBox(width: 10),
+            const CircleAvatar(
+              backgroundColor: Color.fromARGB(255, 72, 104, 219),
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+          ],
         ],
       ),
     );

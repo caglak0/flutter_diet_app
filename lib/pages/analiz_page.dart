@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -152,13 +153,11 @@ class _AnalizScreenState extends State<AnalizScreen> {
                         bottomTitles: SideTitles(
                           showTitles: true,
                           getTextStyles: (value) => const TextStyle(
-                            color:
-                                Colors.white, // X eksenindeki yazıların rengi
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                           ),
                           getTitles: (value) {
-                            // x eksenindeki etiketleri oluştur
                             switch (value.toInt()) {
                               case 0:
                                 return 'Mon';
@@ -183,11 +182,9 @@ class _AnalizScreenState extends State<AnalizScreen> {
                           getTextStyles: (value) => const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize:
-                                10, // Y eksenindeki yazıların font büyüklüğü
+                            fontSize: 10,
                           ),
                           getTitles: (value) {
-                            // y eksenindeki etiketleri oluştur
                             if (value % 500 == 0) {
                               return value.toInt().toString();
                             }
@@ -213,7 +210,7 @@ class _AnalizScreenState extends State<AnalizScreen> {
                       minX: 0,
                       maxX: 6,
                       gridData: FlGridData(
-                        horizontalInterval: 500, // Y eksenindeki aralık
+                        horizontalInterval: 500, 
                       ),
                     ),
                   ),
@@ -243,7 +240,7 @@ class _AnalizScreenState extends State<AnalizScreen> {
             ),
             const SizedBox(
               height: 100,
-            ), // Ekranın daha fazla aşağı inmesi için boşluk ekledim
+            ),
           ],
         ),
       ),

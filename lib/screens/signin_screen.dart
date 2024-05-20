@@ -33,7 +33,6 @@ class _SigninScreenState extends State<SigninScreen> {
         _passwordController.text = prefs.getString('password') ?? '';
       }
     });
-    _checkLoginStatus(); // Call here to ensure it runs after credentials are loaded
   }
 
   _saveCredentials() async {
@@ -45,21 +44,6 @@ class _SigninScreenState extends State<SigninScreen> {
     } else {
       prefs.remove('email');
       prefs.remove('password');
-    }
-  }
-
-  _checkLoginStatus() async {
-    String email = _emailController.text;
-    String password = _passwordController.text;
-    if (email.isNotEmpty && password.isNotEmpty) {
-      String? result = await AuthService().signIn(email, password);
-      if (result == 'success') {
-        if (!mounted) return; // Ensure the widget is still in the widget tree
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const NavbarTheme()),
-          (route) => false,
-        );
-      }
     }
   }
 
@@ -215,7 +199,8 @@ class _SigninScreenState extends State<SigninScreen> {
                               );
                               if (result == 'success') {
                                 await _saveCredentials(); // Save credentials after successful login
-                                if (!mounted) return; // Ensure the widget is still in the widget tree
+                                if (!mounted)
+                                  return; // Ensure the widget is still in the widget tree
                                 Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                     builder: (context) => const NavbarTheme(),
