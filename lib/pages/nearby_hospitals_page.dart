@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_diet_app/models/hastane_model.dart';
-import 'package:flutter_diet_app/services/hastane_service.dart';
+import 'package:flutter_diet_app/service/hastane_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 

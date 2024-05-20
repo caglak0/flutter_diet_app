@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_diet_app/models/nobetci_eczane_model.dart';
-import 'package:flutter_diet_app/services/nobetci_eczane_service.dart';
+import 'package:flutter_diet_app/service/nobetci_eczane_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
