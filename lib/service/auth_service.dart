@@ -25,20 +25,17 @@ class AuthService {
     User? user;
 
     try {
-      final GoogleSignInAccount? googleSignInAccount =
-          await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication =
-            await googleSignInAccount.authentication;
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
           idToken: googleSignInAuthentication.idToken,
         );
 
-        final UserCredential userCredential =
-            await firebaseAuth.signInWithCredential(credential);
+        final UserCredential userCredential = await firebaseAuth.signInWithCredential(credential);
         user = userCredential.user;
 
         if (user != null) {
@@ -57,8 +54,7 @@ class AuthService {
   Future<String?> signIn(String email, String password) async {
     String? res;
     try {
-      await firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
+      await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
       res = "success";
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -79,12 +75,11 @@ class AuthService {
     return res;
   }
 
-  Future<String?> signUp(String email, String name, String surname,
-      String password, String gender, int kilo, int size, int age) async {
+  Future<String?> signUp(
+      String email, String name, String surname, String password, String gender, int kilo, int size, int age) async {
     String? res;
     try {
-      final result = await firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      final result = await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       try {
         await firebaseFirestore.collection("users").add({
           "email": email,

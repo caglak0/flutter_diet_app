@@ -16,8 +16,7 @@ class NavbarTheme extends StatefulWidget {
   State<NavbarTheme> createState() => _NavbarThemeState();
 }
 
-class _NavbarThemeState extends State<NavbarTheme>
-    with TickerProviderStateMixin {
+class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin {
   late final TabController _tabController;
   final double _notchedMargin = 10;
   List<IconData> icons = [];
@@ -25,8 +24,7 @@ class _NavbarThemeState extends State<NavbarTheme>
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: _MyTabViews.values.length, vsync: this);
+    _tabController = TabController(length: _MyTabViews.values.length, vsync: this);
   }
 
   @override
@@ -46,8 +44,7 @@ class _NavbarThemeState extends State<NavbarTheme>
               ),
             );
           },
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: const Color.fromARGB(255, 102, 195, 106),
           child: const Icon(
             Icons.smart_toy_outlined,
@@ -184,8 +181,7 @@ class _NavbarThemeState extends State<NavbarTheme>
               ),
             ],
           ),
-          body:
-              ListView(padding: const EdgeInsets.only(bottom: 200), children: [
+          body: ListView(padding: const EdgeInsets.only(bottom: 200), children: [
             Align(
               alignment: Alignment.topCenter,
               child: Column(
@@ -195,15 +191,15 @@ class _NavbarThemeState extends State<NavbarTheme>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildCardWidget("Kahvaltı 🍳", "Kahvaltı 🍳"),
-                      _buildCardWidget("Ara Öğün 🥗", "Ara Öğün 🥗")
+                      _buildCardWidget("Kahvaltı 🍳", "Kahvaltı"),
+                      _buildCardWidget("Ara Öğün 🥗", "Ara Öğün")
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildCardWidget("Öğle Yemeği 🥐", "Öğle Yemeği 🥐"),
-                      _buildCardWidget("Akşam Yemeği 🍕", "Akşam Yemeği 🍕"),
+                      _buildCardWidget("Öğle Yemeği 🥐", "Öğle Yemeği"),
+                      _buildCardWidget("Akşam Yemeği 🍕", "Akşam Yemeği"),
                     ],
                   ),
                   const WaterCard(),

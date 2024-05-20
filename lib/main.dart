@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_diet_app/screens/welcome_page.dart';
+import 'package:flutter_diet_app/pages/home_screen.dart';
 import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,8 +16,7 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData get currentTheme => _currentTheme;
 
   void toggleTheme() {
-    _currentTheme =
-        _currentTheme == LighTema().theme ? ThemeData.dark() : LighTema().theme;
+    _currentTheme = _currentTheme == LighTema().theme ? ThemeData.dark() : LighTema().theme;
     notifyListeners();
   }
 
@@ -34,9 +33,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
-      child: const MyApp(),
+    Builder(
+      builder: (context) => ChangeNotifierProvider(
+        create: (context) => ThemeProvider(),
+        child: const MyApp(),
+      ),
     ),
   );
 }
@@ -51,6 +52,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: themeProvider._currentTheme,
-        home: const WelcomePage());
+        home: const NavbarTheme());
   }
 }
