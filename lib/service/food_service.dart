@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_diet_app/model/barcode_model.dart';
 import 'package:flutter_diet_app/model/foodbyid_model.dart';
 import 'package:flutter_diet_app/model/search_model.dart';
 import 'package:http/http.dart' as http;
@@ -77,6 +78,25 @@ class FatSecretService {
       return FoodByID.fromJson(jsonResponse);
     } else {
       throw Exception('Yiyecek detayları yüklenemedi: ${response.statusCode}');
+    }
+  }
+
+  static Future<BarcodeModel> foodByBarcodeService(String barcode) async {
+    final token = await _getAccessToken();
+    final uri = Uri.parse(_baseUrl);
+    final response = await http.post(uri, headers: {
+      'Authorization': 'Bearer $token'
+    }, body: {
+      'method': 'food.find_id_for_barcode',
+      'format': 'json',
+      'barcode': barcode,
+    });
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      return BarcodeModel.fromJson(jsonResponse);
+    } else {
+      throw Exception('Failed to load food by barcode: ${response.statusCode}');
     }
   }
 }

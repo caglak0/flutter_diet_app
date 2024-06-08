@@ -8,6 +8,8 @@ import 'package:flutter_diet_app/pages/asistan_app.dart';
 import 'package:flutter_diet_app/pages/profil_page.dart';
 import 'package:flutter_diet_app/pages/search_page.dart';
 import 'package:flutter_diet_app/pages/side_menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class NavbarTheme extends StatefulWidget {
   const NavbarTheme({super.key});
@@ -17,19 +19,68 @@ class NavbarTheme extends StatefulWidget {
 }
 
 class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin {
+  double _totalCalories = 0.0;
   late final TabController _tabController;
   final double _notchedMargin = 10;
   List<IconData> icons = [];
+  final Map<String, List<Map<String, dynamic>>> _selectedFoods = {
+    'Kahvaltı': [],
+    'Ara Öğün': [],
+    'Öğle Yemeği': [],
+    'Akşam Yemeği': [],
+  };
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: _MyTabViews.values.length, vsync: this);
+    _loadSelectedFoods();
+  }
+
+  Future<void> _loadSelectedFoods() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedFoods.forEach((key, value) {
+        final String? foodsJson = prefs.getString('${key}Foods');
+        if (foodsJson != null) {
+          _selectedFoods[key] = List<Map<String, dynamic>>.from(json.decode(foodsJson));
+        }
+      });
+    });
+    _updateTotalCalories();
+  }
+
+  Future<void> _saveSelectedFoods() async {
+    final prefs = await SharedPreferences.getInstance();
+    _selectedFoods.forEach((key, value) {
+      prefs.setString('${key}Foods', json.encode(value));
+    });
+  }
+
+  void _addFood(String mealType, String name, double calories, int quantity) {
+    setState(() {
+      _selectedFoods[mealType]!.add({'name': name, 'calories': calories, 'quantity': quantity});
+      _updateTotalCalories();
+    });
+  }
+
+  void _removeFood(String mealType, int index) {
+    setState(() {
+      _selectedFoods[mealType]!.removeAt(index);
+      _updateTotalCalories();
+    });
+  }
+
+  void _updateTotalCalories() {
+    setState(() {
+      _totalCalories = _selectedFoods.values
+          .expand((meal) => meal)
+          .fold(0.0, (sum, food) => sum + (food['calories'] as num).toDouble());
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-  
     return DefaultTabController(
       length: _MyTabViews.values.length,
       child: Scaffold(
@@ -97,13 +148,21 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
 
   Widget _buildCardWidget(String title, String cardTitle) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SearchPage(title: cardTitle),
           ),
         );
+
+        if (result != null && result is Map<String, dynamic>) {
+          final String name = result['name'];
+          final double calories = result['calories'];
+          final int quantity = result['quantity'];
+
+          _addFood(cardTitle, name, calories, quantity);
+        }
       },
       child: Card(
         child: Padding(
@@ -171,10 +230,7 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 30,
-                    ),
+                    icon: const Icon(Icons.arrow_forward_ios_rounded, size: 30),
                   ),
                 ],
               ),
@@ -186,7 +242,7 @@ class _NavbarThemeState extends State<NavbarTheme> with TickerProviderStateMixin
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  RadialGraph(context: context),
+                  RadialGraph(key: UniqueKey(), totalCalories: _totalCalories),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

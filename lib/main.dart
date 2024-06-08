@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_diet_app/pages/home_screen.dart';
 import 'package:flutter_diet_app/screens/welcome_page.dart';
 import 'package:flutter_diet_app/theme/light_tema.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +9,6 @@ class ThemeProvider extends ChangeNotifier {
   late ThemeData _currentTheme;
 
   ThemeProvider() {
-    // Başlangıçta varsayılan tema olarak LighTema'yı kullan
     _currentTheme = LighTema().theme;
   }
 
@@ -21,7 +19,6 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Özel LighTema'yı kullanarak temayı ayarla
   void setCustomTheme() {
     _currentTheme = LighTema().theme;
     notifyListeners();
@@ -51,7 +48,7 @@ class MyApp extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Healt +',
       theme: themeProvider._currentTheme,
       home: const WelcomePage(),
     );

@@ -36,10 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _fetchUserData() async {
     if (user != null) {
       try {
-        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user!.uid)
-            .get();
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
 
         if (userSnapshot.exists) {
           final data = userSnapshot.data() as Map<String, dynamic>?;
@@ -240,8 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(kilo, style: const TextStyle(fontSize: 16)),
-                    Text(targetKilo.isNotEmpty ? targetKilo : 'Hedef',
-                        style: const TextStyle(fontSize: 16)),
+                    Text(targetKilo.isNotEmpty ? targetKilo : 'Hedef', style: const TextStyle(fontSize: 16)),
                   ],
                 ),
               ],
@@ -307,10 +303,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _saveUserData() async {
     if (user != null) {
       try {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user!.uid)
-            .update({
+        await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
           'kilo': kilo,
           'size': size,
           'age': age,
@@ -324,10 +317,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _saveTargetKilo() async {
     if (user != null) {
       try {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user!.uid)
-            .update({'targetKilo': targetKilo});
+        await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({'targetKilo': targetKilo});
       } catch (e) {
         print("Error saving target kilo: $e");
       }

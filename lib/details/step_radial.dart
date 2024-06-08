@@ -42,10 +42,7 @@ class _StepRadialState extends State<StepRadial> {
     });
 
     if (currentUser != null) {
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser!.uid)
-          .get();
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).get();
 
       if (userSnapshot.exists) {
         final data = userSnapshot.data() as Map<String, dynamic>?;
@@ -90,10 +87,7 @@ class _StepRadialState extends State<StepRadial> {
 
   Future<void> saveDataToFirestore() async {
     if (currentUser != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser!.uid)
-          .set({
+      await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).set({
         'todaySteps': _todaySteps,
         'savedSteps': _savedSteps,
         'lastDay': lastDay,
@@ -163,8 +157,7 @@ class _StepRadialState extends State<StepRadial> {
     double kcal = calculateKcal(_todaySteps);
     String activeTime = calculateActiveTime(_todaySteps);
     double km = calculateKm(_todaySteps);
-    double stepPercentage =
-        (_todaySteps.isNotEmpty) ? double.parse(_todaySteps) / 400 : 0.0;
+    double stepPercentage = (_todaySteps.isNotEmpty) ? double.parse(_todaySteps) / 400 : 0.0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -187,10 +180,7 @@ class _StepRadialState extends State<StepRadial> {
                           cornerStyle: CornerStyle.bothCurve,
                           color: Colors.orange,
                           gradient: const SweepGradient(
-                            colors: [
-                              Color.fromARGB(222, 255, 192, 203),
-                              Color.fromARGB(222, 228, 99, 142)
-                            ],
+                            colors: [Color.fromARGB(222, 255, 192, 203), Color.fromARGB(222, 228, 99, 142)],
                             stops: [0.1, 0.75],
                           ),
                         ),
@@ -209,8 +199,7 @@ class _StepRadialState extends State<StepRadial> {
                           widget: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset('assets/shoe.png',
-                                  width: 40, height: 40),
+                              Image.asset('assets/shoe.png', width: 40, height: 40),
                               Text(
                                 _todaySteps,
                                 style: const TextStyle(

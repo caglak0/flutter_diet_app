@@ -4,7 +4,7 @@ import 'package:flutter_diet_app/service/food_service.dart';
 
 class FoodDetailView extends StatelessWidget {
   final String foodId;
-  final void Function(String name, double calories) onAddFood;
+  final void Function(String name, double calories, int quantity) onAddFood;
 
   const FoodDetailView({super.key, required this.foodId, required this.onAddFood});
 
@@ -40,6 +40,8 @@ class FoodDetailView extends StatelessWidget {
                       itemCount: servings.length,
                       itemBuilder: (context, index) {
                         final serving = servings[index];
+                        final TextEditingController _quantityController = TextEditingController(text: "1");
+
                         return Card(
                           child: ListTile(
                             title: Text(serving.servingDescription!),
@@ -50,12 +52,28 @@ class FoodDetailView extends StatelessWidget {
                                 Text('Karbonhidrat: ${serving.carbohydrate} g'),
                                 Text('Protein: ${serving.protein} g'),
                                 Text('Yağ: ${serving.fat} g'),
+                                Row(
+                                  children: [
+                                    const Text('Miktar:'),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: _quantityController,
+                                        keyboardType: TextInputType.number,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.add),
                               onPressed: () {
-                                onAddFood(food.foodName!, double.parse(serving.calories!));
+                                final quantity = int.tryParse(_quantityController.text) ?? 1;
+                                onAddFood(food.foodName!, double.parse(serving.calories!) * quantity, quantity);
                                 Navigator.pop(context);
                               },
                             ),

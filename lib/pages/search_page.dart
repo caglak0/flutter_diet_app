@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_diet_app/model/search_model.dart';
 import 'package:flutter_diet_app/pages/food_detail_page.dart';
 import 'package:flutter_diet_app/service/food_service.dart';
-import 'package:flutter_diet_app/widgets/custom_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class SearchPage extends StatefulWidget {
   final String title;
-  const SearchPage({Key? key, required this.title}) : super(key: key);
+  const SearchPage({super.key, required this.title});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -49,9 +48,9 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  void _addFood(String mealType, String name, double calories) {
+  void _addFood(String mealType, String name, double calories, int quantity) {
     setState(() {
-      _selectedFoods[mealType]!.add({'name': name, 'calories': calories});
+      _selectedFoods[mealType]!.add({'name': name, 'calories': calories, 'quantity': quantity});
       _saveSelectedFoods();
     });
   }
@@ -75,15 +74,24 @@ class _SearchPageState extends State<SearchPage> {
       MaterialPageRoute(
         builder: (context) => FoodDetailView(
           foodId: foodId,
-          onAddFood: (name, calories) => _addFood(mealType, name, calories),
+          onAddFood: (name, calories, quantity) => _addFood(mealType, name, calories, quantity),
         ),
       ),
     );
+
+    if (food != null && food is Map<String, dynamic>) {
+      Navigator.pop(context, food);
+    }
   }
 
   Widget _buildFoodList(String mealType) {
     final foods = _selectedFoods[mealType]!;
-    final totalCalories = foods.fold(0.0, (sum, food) => sum + (food['calories'] as num).toDouble());
+    final totalCalories = foods.fold(0.0, (sum, food) {
+      if (food['calories'] is num || food['calories'] is String) {
+        return sum + (double.parse(food['calories'].toString()));
+      }
+      return sum;
+    });
 
     return Column(
       children: [
@@ -100,21 +108,34 @@ class _SearchPageState extends State<SearchPage> {
         ),
         if (foods.isNotEmpty)
           SizedBox(
-            height: 150, // İstenilen yüksekliği ayarlayabilirsiniz
+            height: 150,
             child: ListView.builder(
-              scrollDirection: Axis.vertical, // Yatay kaydırma ekleniyor
+              scrollDirection: Axis.vertical,
               itemCount: foods.length,
               itemBuilder: (context, index) {
                 final food = foods[index];
-                return SizedBox(
-                  width: 150, // İstenilen genişliği ayarlayabilirsiniz
+                final quantity = food['quantity'] ?? 1;
+                return Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.blue, Colors.white],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
                   child: Card(
                     child: ListTile(
-                      title: Text(food['name']),
+                      title: Text('${food['name']}'),
                       subtitle: Text('${food['calories']} kcal'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => _removeFood(mealType, index),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          quantity > 1 ? Text('$quantity adet') : Container(),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.blue),
+                            onPressed: () => _removeFood(mealType, index),
+                          ),
+                        ],
                       ),
                     ),
                   ),
