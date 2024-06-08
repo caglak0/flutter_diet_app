@@ -21,17 +21,20 @@ class AuthService {
 
   Future<void> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
 
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
           idToken: googleSignInAuthentication.idToken,
         );
 
-        final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
+        final UserCredential userCredential =
+            await _firebaseAuth.signInWithCredential(credential);
         final User? user = userCredential.user;
 
         if (user != null) {
@@ -45,8 +48,8 @@ class AuthService {
 
   Future<String?> signIn(String email, String password) async {
     try {
-      final UserCredential userCredential =
-          await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      final UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
       final User? user = userCredential.user;
 
       if (user != null) {
@@ -68,11 +71,11 @@ class AuthService {
     return null;
   }
 
-  Future<String?> signUp(
-      String email, String name, String surname, String password, String gender, int kilo, int size, int age) async {
+  Future<String?> signUp(String email, String name, String surname,
+      String password, String gender, int kilo, int size, int age) async {
     try {
-      final UserCredential result =
-          await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      final UserCredential result = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
       final User? user = result.user;
 
       if (user != null) {
@@ -101,23 +104,28 @@ class AuthService {
   }
 
   Future<void> _saveUserData(User user) async {
-    DocumentSnapshot userSnapshot = await _firebaseFirestore.collection('users').doc(user.uid).get();
+    // Kullanıcı kimliğini al
+    String userId = user.uid;
 
-    if (!userSnapshot.exists) {
-      await _firebaseFirestore.collection('users').doc(user.uid).set({
-        "email": user.email,
-        "name": user.displayName ?? '',
-        "surname": '',
-        "gender": '',
-        "kilo": 0,
-        "size": 0,
-        "age": 0,
-      });
-    }
+    // Kullanıcı verilerini Firestore'a kaydet
+    await _firebaseFirestore.collection('users').doc(userId).set({
+      "email": user.email,
+      "name": user.displayName ?? '',
+      "surname": '',
+      "gender": '',
+      "kilo": 0,
+      "size": 0,
+      "age": 0,
+    });
   }
 
   Future<Map<String, dynamic>?> fetchUserData(User user) async {
-    DocumentSnapshot userSnapshot = await _firebaseFirestore.collection('users').doc(user.uid).get();
+    // Kullanıcı kimliğini al
+    String userId = user.uid;
+
+    // Firestore'dan kullanıcı verilerini al
+    DocumentSnapshot userSnapshot =
+        await _firebaseFirestore.collection('users').doc(userId).get();
 
     if (userSnapshot.exists) {
       return userSnapshot.data() as Map<String, dynamic>?;
